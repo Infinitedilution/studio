@@ -10,6 +10,10 @@ const defaultSettings: Settings = {
   background: 'dots',
   gradientFrom: '222 84% 5%', // Default dark theme background
   gradientTo: '240 4% 12%',   // Default dark theme card background
+  gradientType: 'linear',
+  patternColor: '212 87% 60%', // Default accent
+  patternOpacity: 0.1,
+  patternGlow: false,
 };
 
 interface SettingsContextType {
@@ -35,7 +39,9 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     try {
       const storedSettings = localStorage.getItem(SETTINGS_KEY);
       if (storedSettings) {
-        setSettings({ ...defaultSettings, ...JSON.parse(storedSettings) });
+        // Merge stored settings with defaults to ensure all keys are present
+        const parsed = JSON.parse(storedSettings);
+        setSettings({ ...defaultSettings, ...parsed });
       }
     } catch (error) {
       console.error('Failed to parse settings from localStorage', error);
@@ -47,16 +53,30 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     if (isMounted) {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
       
-      document.body.classList.remove('bg-dots', 'bg-blueprint', 'bg-mesh');
-      document.body.style.backgroundImage = ''; // Clear previous gradient
+      const body = document.body;
+      // Clear all dynamic background/pattern classes and styles
+      body.className = body.className.split(' ').filter(c => !c.startsWith('bg-') && c !== 'glow').join(' ');
+      body.style.backgroundImage = '';
+      body.style.boxShadow = '';
+      body.style.backgroundColor = `hsl(var(--background))`;
 
-      if (settings.background === 'gradient' && settings.gradientFrom && settings.gradientTo) {
-          document.body.style.setProperty('--gradient-from', `hsl(${settings.gradientFrom})`);
-          document.body.style.setProperty('--gradient-to', `hsl(${settings.gradientTo})`);
-          document.body.style.backgroundImage = 'linear-gradient(to bottom right, var(--gradient-from), var(--gradient-to))';
-      } else if (settings.background) {
-          // Re-apply class-based background if not gradient
-          document.body.classList.add(`bg-${settings.background}`);
+      // Set pattern variables for dots/blueprint to use
+      body.style.setProperty('--pattern-color', settings.patternColor);
+      body.style.setProperty('--pattern-opacity', String(settings.patternOpacity));
+
+      if (settings.background === 'gradient') {
+          const fromColor = `hsl(${settings.gradientFrom})`;
+          const toColor = `hsl(${settings.gradientTo})`;
+          if (settings.gradientType === 'radial') {
+            body.style.backgroundImage = `radial-gradient(circle, ${fromColor}, ${toColor})`;
+          } else {
+            body.style.backgroundImage = `linear-gradient(to bottom right, ${fromColor}, ${toColor})`;
+          }
+      } else if (['dots', 'blueprint', 'mesh'].includes(settings.background)) {
+          body.classList.add(`bg-${settings.background}`);
+          if (settings.patternGlow && (settings.background === 'dots' || settings.background === 'blueprint')) {
+              body.classList.add('glow');
+          }
       }
     }
   }, [settings, isMounted]);

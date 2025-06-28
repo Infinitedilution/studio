@@ -11,6 +11,10 @@ export interface App {
 export interface Settings {
   iconSize: number;
   background: string;
-  gradientFrom?: string;
-  gradientTo?: string;
+  gradientFrom: string;
+  gradientTo: string;
+  gradientType: 'linear' | 'radial';
+  patternColor: string;
+  patternOpacity: number;
+  patternGlow: boolean;
 }

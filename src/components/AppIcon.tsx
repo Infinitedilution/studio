@@ -75,7 +75,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
             fill
             sizes={`${iconSize}px`}
             data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
-            className="rounded-2xl bg-card object-cover [filter:drop-shadow(0_2px_4px_rgba(0,0,0,0.5))] transition-all group-hover:[filter:drop-shadow(0_4px_8px_rgba(0,0,0,0.6))]"
+            className="rounded-2xl bg-card object-cover transition-all [filter:drop-shadow(0_4px_6px_rgba(0,0,0,0.15))] group-hover:[filter:drop-shadow(0_10px_15px_rgba(0,0,0,0.15))] dark:[filter:drop-shadow(0_2px_4px_rgba(0,0,0,0.5))] dark:group-hover:[filter:drop-shadow(0_4px_8px_rgba(0,0,0,0.6))]"
           />
           <div className="absolute inset-0 rounded-2xl bg-black/5 group-hover:bg-black/0 transition-colors" />
         </motion.div>

@@ -89,7 +89,7 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });
   };
 
-  const glassStyle = "bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_#FFFFFF0D] border border-white/20 hover:bg-white/20";
+  const glassStyle = "border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

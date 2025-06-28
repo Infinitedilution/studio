@@ -79,12 +79,15 @@ export function OrbitalDock() {
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
   const filteredApps = useMemo(() => {
+    if (isWiggleMode) {
+      return apps;
+    }
     return apps.filter(app => {
       const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
       const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [apps, debouncedSearchQuery, selectedCategory]);
+  }, [apps, debouncedSearchQuery, selectedCategory, isWiggleMode]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -115,7 +118,7 @@ export function OrbitalDock() {
   }
 
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
-  const glassStyle = "bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_#FFFFFF0D] border border-white/20 hover:bg-white/20";
+  const glassStyle = "border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
 
   return (
     <div className="flex flex-col min-h-screen text-foreground transition-colors duration-300">
@@ -126,7 +129,7 @@ export function OrbitalDock() {
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon" className={`h-12 w-12 flex-shrink-0 rounded-full ${glassStyle}`} disabled={isWiggleMode}>
+                            <Button size="icon" className={`h-12 w-12 flex-shrink-0 rounded-full ${glassStyle}`} disabled={isWiggleMode}>
                                 <Filter className="h-5 w-5" />
                                 <span className="sr-only">Filter by category</span>
                             </Button>
@@ -156,7 +159,6 @@ export function OrbitalDock() {
                     <div className="flex items-center gap-2">
                         <AddAppDialog onAddApp={addApp} />
                         <Button
-                            variant="outline"
                             size="icon"
                             onClick={handleToggleWiggleMode}
                             className={cn(`rounded-full transition-colors h-12 w-12 ${glassStyle}`, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
@@ -166,11 +168,11 @@ export function OrbitalDock() {
                             <Grip className="h-5 w-5" />
                             <span className="sr-only">Toggle edit mode</span>
                         </Button>
-                        <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} className={`rounded-full h-12 w-12 ${glassStyle}`}>
+                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={`rounded-full h-12 w-12 ${glassStyle}`}>
                             <SettingsIcon className="h-5 w-5" />
                              <span className="sr-only">Open Settings</span>
                         </Button>
-                        <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`rounded-full h-12 w-12 ${glassStyle}`}>
+                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`rounded-full h-12 w-12 ${glassStyle}`}>
                             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                             <span className="sr-only">Toggle theme</span>

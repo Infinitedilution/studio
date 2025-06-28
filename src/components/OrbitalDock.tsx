@@ -101,7 +101,7 @@ export function OrbitalDock() {
     );
   }
 
-  const displayedApps = isWiggleMode ? apps : filteredApps;
+  const appsToRender = isWiggleMode ? apps : filteredApps;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
@@ -143,12 +143,12 @@ export function OrbitalDock() {
             <Reorder.Group
               as="div"
               axis="xy"
-              values={displayedApps}
+              values={apps}
               onReorder={setApps}
               className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
             >
               <AnimatePresence>
-                {displayedApps.map((app) => (
+                {appsToRender.map((app) => (
                   <Reorder.Item
                     key={app.id}
                     value={app}

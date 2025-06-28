@@ -211,24 +211,18 @@ export function OrbitalDock() {
 
   const pageVariants = {
     enter: (direction: number) => ({
-      x: direction !== 0 ? (direction > 0 ? '100%' : '-100%') : 0,
+      x: direction > 0 ? '100%' : '-100%',
       opacity: 0,
     }),
     center: {
+      zIndex: 1,
       x: 0,
       opacity: 1,
-      transition: {
-        x: { type: "spring", stiffness: 200, damping: 25 },
-        opacity: { duration: 0.2 },
-      },
     },
     exit: (direction: number) => ({
+      zIndex: 0,
       x: direction < 0 ? '100%' : '-100%',
       opacity: 0,
-      transition: {
-        x: { type: "spring", stiffness: 200, damping: 25 },
-        opacity: { duration: 0.2 },
-      },
     }),
   };
 
@@ -409,7 +403,7 @@ export function OrbitalDock() {
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 
-      <main ref={mainRef} className="flex-grow pb-40 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden">
+      <main ref={mainRef} className="flex-grow pb-36 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden">
         <div className="max-w-7xl mx-auto h-full">
           <div className="relative overflow-hidden h-full">
             <AnimatePresence initial={false} custom={direction}>
@@ -425,6 +419,10 @@ export function OrbitalDock() {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.1}
                 onDragEnd={handleDragEnd}
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 }
+                }}
                 className={cn("grid gap-x-4 gap-y-8", gridCols)}
               >
                 {paginatedApps.map((app) => (

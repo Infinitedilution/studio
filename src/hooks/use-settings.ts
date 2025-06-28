@@ -9,7 +9,6 @@ const SETTINGS_KEY = 'orbital-dock-settings';
 const defaultSettings: Settings = {
   iconSize: 80,
   dockIconSize: 64,
-  useCustomGradient: false,
   gradientIndex: 0,
 };
 
@@ -64,23 +63,21 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     }
     
     let css = '';
-    if (settings.useCustomGradient) {
-        const gradient = PRESET_GRADIENTS[settings.gradientIndex];
-        if (gradient) {
-            const [start, mid, extra, end] = gradient.colors;
-            css = `
-            body {
-                --gradient-start: ${start};
-                --gradient-mid: ${mid};
-                --gradient-extra: ${extra};
-                --gradient-end: ${end};
-            }
-            `;
+    const gradient = PRESET_GRADIENTS[settings.gradientIndex];
+    if (gradient) {
+        const [start, mid, extra, end] = gradient.colors;
+        css = `
+        body {
+            --gradient-start: ${start};
+            --gradient-mid: ${mid};
+            --gradient-extra: ${extra};
+            --gradient-end: ${end};
         }
+        `;
     }
     styleElement.innerHTML = css;
 
-  }, [settings.useCustomGradient, settings.gradientIndex, isMounted]);
+  }, [settings.gradientIndex, isMounted]);
 
   const setSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings(prev => ({ ...prev, [key]: value }));

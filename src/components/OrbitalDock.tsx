@@ -101,8 +101,6 @@ export function OrbitalDock() {
     );
   }
 
-  const appsToRender = isWiggleMode ? apps : filteredApps;
-
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
       <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
@@ -140,18 +138,19 @@ export function OrbitalDock() {
                 </div>
             </div>
             
-            <Reorder.Group
-              as="div"
-              axis="xy"
-              values={apps}
-              onReorder={setApps}
-              className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
-            >
-              <AnimatePresence>
-                {appsToRender.map((app) => (
+            {isWiggleMode ? (
+              <Reorder.Group
+                as="div"
+                axis="xy"
+                values={apps}
+                onReorder={setApps}
+                className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
+              >
+                {apps.map((app) => (
                   <Reorder.Item
                     key={app.id}
                     value={app}
+                    layoutId={app.id}
                     drag={isWiggleMode}
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -162,10 +161,31 @@ export function OrbitalDock() {
                     <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} />
                   </Reorder.Item>
                 ))}
-              </AnimatePresence>
-            </Reorder.Group>
+              </Reorder.Group>
+            ) : (
+              <motion.div
+                layout
+                className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
+              >
+                <AnimatePresence>
+                  {filteredApps.map((app) => (
+                    <motion.div
+                      key={app.id}
+                      layoutId={app.id}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                      className="relative z-0"
+                    >
+                      <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
 
-            {!isWiggleMode && filteredApps.length === 0 && (
+            {!isWiggleMode && filteredApps.length === 0 && debouncedSearchQuery && (
                 <div className="text-center py-16 text-muted-foreground">
                     <p className="text-lg">No apps found for "{debouncedSearchQuery}"</p>
                 </div>

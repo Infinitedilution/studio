@@ -27,7 +27,21 @@ export function OrbitalDock() {
     try {
       const storedApps = localStorage.getItem('orbital-dock-apps');
       if (storedApps) {
-        setApps(JSON.parse(storedApps));
+        const parsedApps = JSON.parse(storedApps);
+        if (Array.isArray(parsedApps)) {
+          // Filter out any invalid or malformed app objects from localStorage
+          const validApps = parsedApps.filter(app => 
+            app &&
+            typeof app.id === 'string' &&
+            typeof app.name === 'string' &&
+            typeof app.url === 'string' &&
+            typeof app.iconUrl === 'string' &&
+            typeof app.category === 'string'
+          );
+          setApps(validApps);
+        } else {
+          setApps(defaultApps);
+        }
       } else {
         setApps(defaultApps);
       }

@@ -8,6 +8,8 @@ const SETTINGS_KEY = 'orbital-dock-settings';
 const defaultSettings: Settings = {
   iconSize: 80,
   background: 'dots',
+  gradientFrom: '222 84% 5%', // Default dark theme background
+  gradientTo: '240 4% 12%',   // Default dark theme card background
 };
 
 interface SettingsContextType {
@@ -33,7 +35,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     try {
       const storedSettings = localStorage.getItem(SETTINGS_KEY);
       if (storedSettings) {
-        setSettings(JSON.parse(storedSettings));
+        setSettings({ ...defaultSettings, ...JSON.parse(storedSettings) });
       }
     } catch (error) {
       console.error('Failed to parse settings from localStorage', error);
@@ -46,8 +48,15 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
       
       document.body.classList.remove('bg-dots', 'bg-blueprint', 'bg-mesh');
-      if (settings.background) {
-        document.body.classList.add(`bg-${settings.background}`);
+      document.body.style.backgroundImage = ''; // Clear previous gradient
+
+      if (settings.background === 'gradient' && settings.gradientFrom && settings.gradientTo) {
+          document.body.style.setProperty('--gradient-from', `hsl(${settings.gradientFrom})`);
+          document.body.style.setProperty('--gradient-to', `hsl(${settings.gradientTo})`);
+          document.body.style.backgroundImage = 'linear-gradient(to bottom right, var(--gradient-from), var(--gradient-to))';
+      } else if (settings.background) {
+          // Re-apply class-based background if not gradient
+          document.body.classList.add(`bg-${settings.background}`);
       }
     }
   }, [settings, isMounted]);

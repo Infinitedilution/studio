@@ -11,4 +11,6 @@ export interface App {
 export interface Settings {
   iconSize: number;
   background: string;
+  gradientFrom?: string;
+  gradientTo?: string;
 }

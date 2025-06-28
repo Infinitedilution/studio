@@ -30,14 +30,15 @@ const prompt = ai.definePrompt({
   name: 'generateAppDescriptionPrompt',
   input: {schema: GenerateAppDescriptionInputSchema},
   output: {schema: GenerateAppDescriptionOutputSchema},
-  prompt: `You are a creative writer for a futuristic app launcher with a "glassmorphic" UI, similar to a high-end game launcher.
-Your task is to write a compelling, one-paragraph description for the given application.
-Focus on what the app does and its key features, but write it in an exciting and slightly edgy style. Keep it concise.
+  prompt: `You are a helpful assistant who writes concise and accurate summaries for web applications for a futuristic app launcher.
+Your task is to provide a factual, one-paragraph description for the given application based on your knowledge of it from its URL.
+Summarize what the app does and its main purpose. Avoid making up features.
+While the summary should be accurate, present it in an engaging and clear style suitable for an app launcher.
 
 App Name: {{{name}}}
 App URL: {{{url}}}
 
-Generate the description:`,
+Generate the description based on the official information about the app:`,
 });
 
 const generateAppDescriptionFlow = ai.defineFlow(

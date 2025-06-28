@@ -38,8 +38,19 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
   });
 
   const handleUrlBlur = async () => {
-    const url = form.getValues('url');
-    if (url && z.string().url().safeParse(url).success) {
+    let url = form.getValues('url').trim();
+    if (!url) return;
+
+    if (!/^https?:\/\//i.test(url)) {
+      if (!url.startsWith('www.')) {
+        url = 'www.' + url;
+      }
+      url = 'https://' + url;
+      form.setValue('url', url, { shouldDirty: true });
+    }
+
+    const isUrlValid = await form.trigger('url');
+    if (isUrlValid) {
       setIsSuggesting(true);
       try {
         const [categoryRes] = await Promise.all([

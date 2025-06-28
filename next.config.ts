@@ -18,9 +18,9 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.google.com',
+        hostname: 'icons.duckduckgo.com',
         port: '',
-        pathname: '/s2/favicons/**',
+        pathname: '/ip3/**',
       },
     ],
   },

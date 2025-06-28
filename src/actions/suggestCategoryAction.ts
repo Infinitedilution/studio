@@ -19,12 +19,9 @@ export async function getFaviconAction(url: string) {
     try {
         const urlObj = new URL(url);
         const domain = urlObj.hostname;
-        // Using Google's favicon service is a reliable way to get an icon
-        // without complex server-side scraping.
-        return { iconUrl: `https://www.google.com/s2/favicons?domain=${domain}&sz=128` };
+        return { iconUrl: `https://icons.duckduckgo.com/ip3/${domain}.ico` };
     } catch (error) {
         console.error("Invalid URL for favicon:", error);
-        // Fallback to a placeholder
         return { iconUrl: 'https://placehold.co/128x128.png' };
     }
 }

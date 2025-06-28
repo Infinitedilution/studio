@@ -114,6 +114,15 @@ export function OrbitalDock() {
     setDirection(0);
   }, [debouncedSearchQuery, selectedCategory]);
 
+  const startWiggleMode = useCallback(() => {
+    if (!isWiggleMode) {
+      setIsWiggleMode(true);
+      if (isMobile) {
+        setIsMobileSheetOpen(false);
+      }
+    }
+  }, [isWiggleMode, isMobile]);
+
   const handleToggleWiggleMode = () => {
     setIsWiggleMode(prev => !prev);
     if (isMobile) {
@@ -447,6 +456,7 @@ export function OrbitalDock() {
                     onEdit={setEditingApp}
                     onToggleFavorite={toggleFavorite}
                     iconSize={settings.iconSize}
+                    onStartWiggleMode={startWiggleMode}
                   />
                 ))}
               </motion.div>

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { App } from '@/lib/types';
 import { appHints } from '@/lib/apps';
+import { useRef } from 'react';
 
 interface AppIconProps {
   app: App;
@@ -14,10 +15,36 @@ interface AppIconProps {
   onDelete: (id: string) => void;
   onEdit: (app: App) => void;
   onToggleFavorite: (id: string) => void;
+  onStartWiggleMode: () => void;
   iconSize: number;
 }
 
-export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite, iconSize }: AppIconProps) {
+export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite, onStartWiggleMode, iconSize }: AppIconProps) {
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handlePointerDown = () => {
+    if (isWiggleMode) return;
+    
+    timerRef.current = setTimeout(() => {
+      onStartWiggleMode();
+    }, 500); // Long press duration
+  };
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handlePointerUp = () => {
+    clearTimer();
+  };
+
+  const handlePointerLeave = () => {
+    clearTimer();
+  };
+
   const handleButtonClick = (e: React.MouseEvent, action: () => void) => {
     e.preventDefault();
     e.stopPropagation();
@@ -103,6 +130,10 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
         target="_blank" 
         rel="noopener noreferrer" 
         className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerLeave}
+        onContextMenu={(e) => e.preventDefault()}
         onClick={(e) => { 
             if (isWiggleMode) {
                 e.preventDefault();

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -15,6 +15,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { defaultApps } from '@/lib/apps';
 import type { App } from '@/lib/types';
 import { AddAppDialog } from '@/components/AddAppDialog';
@@ -46,6 +53,7 @@ export function OrbitalDock() {
   const [addAppInitialValue, setAddAppInitialValue] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(0);
   const isMobile = useIsMobile();
+  const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -148,75 +156,153 @@ export function OrbitalDock() {
   const glassStyle = "text-foreground bg-background/80 backdrop-blur-sm border-border hover:bg-background/90";
   const borderStyle = "border-slate-400 dark:border-white/20 dark:hover:bg-white/20";
 
+  const desktopControls = (
+    <div className="w-full max-w-4xl flex items-center gap-2">
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, borderStyle)} disabled={isWiggleMode}>
+                    <Filter className="h-5 w-5" />
+                    <span className="sr-only">Filter by category</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={selectedCategory} onValueChange={setSelectedCategory}>
+                {categories.map(category => (
+                    <DropdownMenuRadioItem key={category} value={category}>{category}</DropdownMenuRadioItem>
+                ))}
+                </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+        </DropdownMenu>
+
+        <div className="relative flex-grow">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+            type="search"
+            placeholder="Search DApps..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            disabled={isWiggleMode}
+            className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, borderStyle)}
+            />
+        </div>
+        <div className="flex items-center gap-2">
+            <Button
+                className={cn(`font-semibold h-10 px-5 rounded-full`, glassStyle)}
+                onClick={() => {
+                    setAddAppInitialValue(undefined);
+                    setIsAddAppDialogOpen(true);
+                }}
+            >
+                <Plus className="mr-2 h-4 w-4" /> Add App
+            </Button>
+            <Button
+                size="icon"
+                onClick={handleToggleWiggleMode}
+                className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, borderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                aria-pressed={isWiggleMode}
+                title="Toggle edit mode"
+            >
+                <Grip className="h-5 w-5" />
+                <span className="sr-only">Toggle edit mode</span>
+            </Button>
+            <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
+                <SettingsIcon className="h-5 w-5" />
+                 <span className="sr-only">Open Settings</span>
+            </Button>
+            <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
+                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <span className="sr-only">Toggle theme</span>
+            </Button>
+        </div>
+    </div>
+  );
+
+  const mobileControls = (
+    <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
+      <SheetTrigger asChild>
+        <Button className={cn('font-semibold h-12 px-5 rounded-full', glassStyle, borderStyle)}>
+          <Menu className="mr-2 h-5 w-5" />
+          Menu & Filters
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Controls</SheetTitle>
+        </SheetHeader>
+        <div className="grid gap-4 py-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search DApps..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              disabled={isWiggleMode}
+              className={cn(`w-full pl-11 pr-4 h-12 rounded-full text-base focus:ring-2 focus:ring-primary`, glassStyle, borderStyle)}
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className={cn(`w-full justify-between font-semibold h-12 px-5 rounded-full`, glassStyle, borderStyle)} disabled={isWiggleMode}>
+                <span>Filter: {selectedCategory}</span>
+                <Filter className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
+              <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup value={selectedCategory} onValueChange={setSelectedCategory}>
+                {categories.map(category => (
+                  <DropdownMenuRadioItem key={category} value={category}>{category}</DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            className={cn(`font-semibold h-12 px-5 rounded-full`, glassStyle)}
+            onClick={() => {
+              setAddAppInitialValue(undefined);
+              setIsAddAppDialogOpen(true);
+              setIsMobileSheetOpen(false);
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add App
+          </Button>
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              size="icon"
+              onClick={handleToggleWiggleMode}
+              className={cn(`rounded-full transition-colors h-12 w-full`, glassStyle, borderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+              aria-pressed={isWiggleMode}
+              title="Toggle edit mode"
+            >
+              <Grip className="h-5 w-5" />
+            </Button>
+            <Button size="icon" onClick={() => { setIsSettingsOpen(true); setIsMobileSheetOpen(false); }} className={cn(`rounded-full h-12 w-full`, glassStyle, borderStyle)}>
+              <SettingsIcon className="h-5 w-5" />
+            </Button>
+            <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-12 w-full`, glassStyle, borderStyle)}>
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            </Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+
   return (
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
-      <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto">
-        <div className="max-w-7xl mx-auto">
-            <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
-                <h1 className="text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>
-                <div className="w-full max-w-3xl flex items-center gap-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, borderStyle)} disabled={isWiggleMode}>
-                                <Filter className="h-5 w-5" />
-                                <span className="sr-only">Filter by category</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56">
-                            <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuRadioGroup value={selectedCategory} onValueChange={setSelectedCategory}>
-                            {categories.map(category => (
-                                <DropdownMenuRadioItem key={category} value={category}>{category}</DropdownMenuRadioItem>
-                            ))}
-                            </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+      <header className="flex flex-col items-center justify-center text-center pt-12 mb-10 gap-6 px-4">
+        <h1 className="text-5xl sm:text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>
+        {isMobile ? mobileControls : desktopControls}
+      </header>
 
-                    <div className="relative flex-grow">
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                        type="search"
-                        placeholder="Search DApps..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        disabled={isWiggleMode}
-                        className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, borderStyle)}
-                        />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button
-                            className={cn(`font-semibold h-12 px-5 rounded-full`, glassStyle)}
-                            onClick={() => {
-                                setAddAppInitialValue(undefined);
-                                setIsAddAppDialogOpen(true);
-                            }}
-                        >
-                            <Plus className="mr-2 h-4 w-4" /> Add App
-                        </Button>
-                        <Button
-                            size="icon"
-                            onClick={handleToggleWiggleMode}
-                            className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, borderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
-                            aria-pressed={isWiggleMode}
-                            title="Toggle edit mode"
-                        >
-                            <Grip className="h-5 w-5" />
-                            <span className="sr-only">Toggle edit mode</span>
-                        </Button>
-                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
-                            <SettingsIcon className="h-5 w-5" />
-                             <span className="sr-only">Open Settings</span>
-                        </Button>
-                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
-                            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                            <span className="sr-only">Toggle theme</span>
-                        </Button>
-                    </div>
-                </div>
-            </header>
-            
+      <main className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto">
+        <div className="max-w-7xl mx-auto">
             <motion.div
               layout
               className={cn("grid gap-x-4 gap-y-8", gridCols)}

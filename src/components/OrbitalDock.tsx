@@ -149,8 +149,8 @@ export function OrbitalDock() {
   const borderStyle = "border-slate-400 dark:border-white/20 dark:hover:bg-white/20";
 
   return (
-    <div className="flex flex-col min-h-screen transition-colors duration-300">
-      <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
+    <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
+      <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
                 <h1 className="text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>
@@ -299,7 +299,7 @@ export function OrbitalDock() {
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
             className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto max-w-full"
         >
-            <div className="flex items-end justify-center gap-3 p-1 overflow-x-auto">
+            <div className="flex items-end gap-3 px-4 py-1 overflow-x-auto snap-x snap-mandatory">
                 <AnimatePresence>
                   {favoriteApps.map((app) => (
                       <motion.a 
@@ -310,7 +310,7 @@ export function OrbitalDock() {
                           layoutId={`dock-${app.id}`}
                           whileHover={{ y: -8, scale: 1.2 }}
                           transition={{ type: 'spring', stiffness: 300 }}
-                          className="group relative"
+                          className="group relative snap-center"
                           title={app.name}
                           initial={{ opacity: 0, scale: 0.5 }}
                           animate={{ opacity: 1, scale: 1 }}

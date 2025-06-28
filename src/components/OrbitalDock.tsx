@@ -225,8 +225,13 @@ export function OrbitalDock() {
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
         <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 stroke-current">
-            <path d="M4 6H20M4 12H20M4 18H20" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
+            <circle cx="12" cy="12" r="12" fill="black" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z" fill="#8C6E63"/>
+            <path d="M8 9C10.5 10 14.5 10.5 17 11" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M8 12C11.5 12 13.5 12 17 12" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M8 15C10.5 14 14.5 13.5 17 13" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M8 18C10.5 16.5 14.5 15 17 14" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
           <span className="sr-only">Menu</span>
         </Button>

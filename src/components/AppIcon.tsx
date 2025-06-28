@@ -35,11 +35,11 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 rounded-full bg-background/50 backdrop-blur-sm text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
+            className="h-5 w-5 rounded-full bg-background/50 backdrop-blur-sm text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
             onClick={(e) => handleButtonClick(e, () => onToggleFavorite(app.id))}
             aria-label={`Favorite ${app.name}`}
           >
-            <Star className={cn("h-4 w-4", app.isFavorite ? "fill-primary text-primary" : "text-foreground/60")} />
+            <Star className={cn("h-3 w-3", app.isFavorite ? "fill-primary text-primary" : "text-foreground/60")} />
           </Button>
         )}
       </div>
@@ -49,7 +49,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
             <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
+                className="h-5 w-5 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
                 onClick={(e) => handleButtonClick(e, () => onEdit(app))}
                 aria-label={`Edit ${app.name}`}
             >
@@ -58,11 +58,11 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
             <Button
               variant="destructive"
               size="icon"
-              className="h-6 w-6 rounded-full shadow-lg"
+              className="h-5 w-5 rounded-full shadow-lg"
               onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
               aria-label={`Delete ${app.name}`}
             >
-              <X className="h-4 w-4" />
+              <X className="h-3 w-3" />
             </Button>
         </div>
       )}

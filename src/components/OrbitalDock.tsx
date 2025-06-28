@@ -143,9 +143,10 @@ export function OrbitalDock() {
       const availableHeight = mainRef.current.offsetHeight - mainPaddingTop - mainPaddingBottom;
       
       const iconContainerHeight = settings.iconSize + 24; // iconSize + text height + gap, estimated
-      const gridRowGap = 32; // from gap-y-8 (2rem)
+      const gridRowGap = 24; // from gap-y-6 (1.5rem)
+      const gridVPadding = 16; // from p-2 on grid container
 
-      const numRows = Math.max(1, Math.floor((availableHeight + gridRowGap) / (iconContainerHeight + gridRowGap)));
+      const numRows = Math.max(1, Math.floor(((availableHeight - gridVPadding) + gridRowGap) / (iconContainerHeight + gridRowGap)));
       
       const gridComputedStyle = getComputedStyle(gridRef.current);
       const numCols = gridComputedStyle.gridTemplateColumns.split(' ').length;
@@ -417,13 +418,12 @@ export function OrbitalDock() {
                 exit="exit"
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.1}
                 onDragEnd={handleDragEnd}
                 transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  x: { type: "spring", stiffness: 300, damping: 35 },
                   opacity: { duration: 0.2 }
                 }}
-                className={cn("grid gap-x-4 gap-y-8", gridCols)}
+                className={cn("absolute inset-0 grid content-start gap-x-4 gap-y-6 p-2", gridCols)}
               >
                 {paginatedApps.map((app) => (
                   <AppIcon

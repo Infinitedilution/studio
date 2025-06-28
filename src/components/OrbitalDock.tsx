@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Grip, Search, Loader2, Settings as SettingsIcon, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -121,7 +120,7 @@ export function OrbitalDock() {
                 <h1 className="text-5xl font-headline font-bold text-foreground">Sonic Dapps</h1>
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger asChild disabled={isWiggleMode}>
                             <Button variant="outline" size="icon" className="h-14 w-14 flex-shrink-0 rounded-full">
                                 <Filter className="h-6 w-6" />
                                 <span className="sr-only">Filter by category</span>
@@ -142,9 +141,10 @@ export function OrbitalDock() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                         <Input
                         type="search"
-                        placeholder="Search apps..."
+                        placeholder={isWiggleMode ? "Exit edit mode to search" : "Search apps..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
+                        disabled={isWiggleMode}
                         className="w-full pl-14 pr-4 py-3 h-14 rounded-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                         />
                     </div>
@@ -169,29 +169,39 @@ export function OrbitalDock() {
                 </div>
             </header>
             
-            <motion.div
+            {isWiggleMode ? (
+              <Reorder.Group as="div" axis="xy" values={apps} onReorder={setApps} className={cn("grid gap-x-4 gap-y-8", gridCols)}>
+                {apps.map((app) => (
+                  <Reorder.Item key={app.id} value={app} className="relative z-0">
+                    <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            ) : (
+              <motion.div
                 layout
                 className={cn("grid gap-x-4 gap-y-8", gridCols)}
-            >
+              >
                 <AnimatePresence>
-                    {filteredApps.map((app) => (
+                  {filteredApps.map((app) => (
                     <motion.div
-                        key={app.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                        className="relative z-0"
+                      key={app.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                      className="relative z-0"
                     >
-                        <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
+                      <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
                     </motion.div>
-                    ))}
+                  ))}
                 </AnimatePresence>
-            </motion.div>
+              </motion.div>
+            )}
 
 
-            {filteredApps.length === 0 && (
+            {filteredApps.length === 0 && !isWiggleMode && (
                 <div className="text-center py-16 text-muted-foreground">
                     <p className="text-lg">No apps found for "{debouncedSearchQuery || selectedCategory}"</p>
                 </div>

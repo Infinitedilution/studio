@@ -42,10 +42,13 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
     if (!url) return;
 
     if (!/^https?:\/\//i.test(url)) {
-      if (!url.startsWith('www.')) {
-        url = 'www.' + url;
+      if (!url.includes('.')) {
+        // do nothing if it's not a valid TLD yet
+      } else if (!url.startsWith('www.')) {
+        url = 'https://www.' + url;
+      } else {
+        url = 'https://' + url;
       }
-      url = 'https://' + url;
       form.setValue('url', url, { shouldDirty: true });
     }
 
@@ -91,8 +94,8 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className={`font-semibold h-14 px-6 rounded-xl ${glassStyle}`}>
-          <Plus className="mr-2 h-5 w-5" /> Add App
+        <Button className={`font-semibold h-12 px-5 rounded-full ${glassStyle}`}>
+          <Plus className="mr-2 h-4 w-4" /> Add App
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

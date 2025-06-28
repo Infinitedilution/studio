@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon, Filter } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -26,6 +26,7 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { EditAppDialog } from './EditAppDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { useSettings } from '@/hooks/use-settings';
+import { useTheme } from "next-themes";
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -37,6 +38,8 @@ export function OrbitalDock() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { settings } = useSettings();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const { theme, setTheme } = useTheme();
+
 
   useEffect(() => {
     try {
@@ -76,13 +79,12 @@ export function OrbitalDock() {
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
   const filteredApps = useMemo(() => {
-    if (isWiggleMode) return apps;
     return apps.filter(app => {
       const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
       const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [apps, debouncedSearchQuery, selectedCategory, isWiggleMode]);
+  }, [apps, debouncedSearchQuery, selectedCategory]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -124,8 +126,8 @@ export function OrbitalDock() {
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon" className={`h-14 w-14 flex-shrink-0 rounded-xl ${glassStyle}`} disabled={isWiggleMode}>
-                                <Filter className="h-6 w-6" />
+                            <Button variant="outline" size="icon" className={`h-12 w-12 flex-shrink-0 rounded-full ${glassStyle}`} disabled={isWiggleMode}>
+                                <Filter className="h-5 w-5" />
                                 <span className="sr-only">Filter by category</span>
                             </Button>
                         </DropdownMenuTrigger>
@@ -141,14 +143,14 @@ export function OrbitalDock() {
                     </DropdownMenu>
 
                     <div className="relative flex-grow">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input
                         type="search"
-                        placeholder={isWiggleMode ? "Exit edit mode to search" : "Search apps..."}
+                        placeholder={isWiggleMode ? "Exit edit mode to search" : "Search DApps..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         disabled={isWiggleMode}
-                        className={`w-full pl-14 pr-4 py-3 h-14 rounded-xl text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${glassStyle}`}
+                        className={`w-full pl-12 pr-4 py-3 h-12 rounded-full text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${glassStyle}`}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -157,16 +159,21 @@ export function OrbitalDock() {
                             variant="outline"
                             size="icon"
                             onClick={handleToggleWiggleMode}
-                            className={cn(`rounded-xl transition-colors h-14 w-14 ${glassStyle}`, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            className={cn(`rounded-full transition-colors h-12 w-12 ${glassStyle}`, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
                             aria-pressed={isWiggleMode}
                             title="Toggle edit mode"
                         >
-                            <Grip className="h-6 w-6" />
+                            <Grip className="h-5 w-5" />
                             <span className="sr-only">Toggle edit mode</span>
                         </Button>
-                        <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} className={`rounded-xl h-14 w-14 ${glassStyle}`}>
-                            <SettingsIcon className="h-6 w-6" />
+                        <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} className={`rounded-full h-12 w-12 ${glassStyle}`}>
+                            <SettingsIcon className="h-5 w-5" />
                              <span className="sr-only">Open Settings</span>
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`rounded-full h-12 w-12 ${glassStyle}`}>
+                            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                            <span className="sr-only">Toggle theme</span>
                         </Button>
                     </div>
                 </div>
@@ -183,6 +190,7 @@ export function OrbitalDock() {
                   layout
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.1 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   className="relative z-0"
                 >

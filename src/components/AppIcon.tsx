@@ -21,7 +21,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
   return (
     <motion.div
       className={cn(
-        "relative flex flex-col items-center gap-2 text-center group",
+        "relative flex flex-col items-center gap-1 text-center group",
         isWiggleMode && "animate-wiggle"
       )}
       style={{ width: iconSize }}
@@ -80,7 +80,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
           <div className="absolute inset-0 rounded-2xl bg-black/5 group-hover:bg-black/0 transition-colors" />
         </motion.div>
       </a>
-      <p className="text-xs font-medium text-foreground truncate w-full">{app.name}</p>
+      <p className="text-[11px] leading-tight pt-1 font-medium text-foreground/90 truncate w-full">{app.name}</p>
     </motion.div>
   );
 }

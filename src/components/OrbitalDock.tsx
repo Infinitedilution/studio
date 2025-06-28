@@ -155,7 +155,7 @@ export function OrbitalDock() {
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
   const glassStyle = "text-foreground bg-background/80 backdrop-blur-sm border-border hover:bg-background/90";
   const borderStyle = "border-slate-400 dark:border-white/20 dark:hover:bg-white/20";
-  const mobileSheetGlassStyle = "bg-white/5 hover:bg-white/10 border border-white/10 text-foreground placeholder:text-foreground/80";
+  const mobileSheetGlassStyle = "bg-background/80 backdrop-blur-xl border border-white/10 text-foreground placeholder:text-foreground/80";
 
   const desktopControls = (
     <div className="w-full max-w-4xl flex items-center gap-2">
@@ -225,7 +225,7 @@ export function OrbitalDock() {
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
         <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
             <circle cx="12" cy="12" r="12" fill="black" />
             <path fillRule="evenodd" clipRule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z" fill="#8C6E63"/>
             <path d="M8 9C10.5 10 14.5 10.5 17 11" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
@@ -236,7 +236,7 @@ export function OrbitalDock() {
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-background/80 backdrop-blur-xl border-t border-border/20">
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-transparent backdrop-blur-xl border-t border-border/20">
         <SheetHeader>
           <SheetTitle>Controls</SheetTitle>
         </SheetHeader>

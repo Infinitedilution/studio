@@ -218,7 +218,7 @@ export function OrbitalDock() {
       x: 0,
       opacity: 1,
       transition: {
-        x: { type: "spring", stiffness: 300, damping: 30 },
+        x: { type: "spring", stiffness: 200, damping: 25 },
         opacity: { duration: 0.2 },
       },
     },
@@ -226,7 +226,7 @@ export function OrbitalDock() {
       x: direction < 0 ? '100%' : '-100%',
       opacity: 0,
       transition: {
-        x: { type: "spring", stiffness: 300, damping: 30 },
+        x: { type: "spring", stiffness: 200, damping: 25 },
         opacity: { duration: 0.2 },
       },
     }),
@@ -404,12 +404,12 @@ export function OrbitalDock() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
-      <header ref={headerRef} className="flex flex-row items-center justify-between pt-8 mb-8 px-4 md:flex-col md:justify-center md:text-center md:pt-12 md:mb-10 md:gap-6">
+      <header ref={headerRef} className="flex flex-row items-center justify-between pt-6 mb-6 px-4 md:flex-col md:justify-center md:text-center md:pt-10 md:mb-8 md:gap-6">
         <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Wiki</h1>
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 
-      <main ref={mainRef} className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden">
+      <main ref={mainRef} className="flex-grow pb-40 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden">
         <div className="max-w-7xl mx-auto h-full">
           <div className="relative overflow-hidden h-full">
             <AnimatePresence initial={false} custom={direction}>

@@ -93,15 +93,6 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
                 />
               </div>
             )}
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="background-pattern" className="pr-4">Show Background Pattern</Label>
-              <Switch
-                  id="background-pattern"
-                  checked={settings.showBackgroundPattern}
-                  onCheckedChange={(value) => setSetting("showBackgroundPattern", value)}
-              />
-            </div>
            </div>
           <Separator />
           <div className="grid gap-4">

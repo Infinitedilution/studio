@@ -23,6 +23,11 @@ export const defaultApps: App[] = [
   { id: '25', name: 'Eggs Finance', url: 'https://eggs.finance', iconUrl: 'https://unavatar.io/eggs.finance', category: 'DeFi', isCustom: false, isFavorite: false },
   { id: '26', name: 'SpookySwap', url: 'https://spookyswap.app', iconUrl: 'https://unavatar.io/spookyswap.app', category: 'Dex', isCustom: false, isFavorite: false },
   { id: '27', name: 'Magpie Protocol', url: 'https://magpie.xyz', iconUrl: 'https://unavatar.io/magpie.xyz', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '28', name: 'Aave', url: 'https://aave.com', iconUrl: 'https://unavatar.io/aave.com', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '29', name: 'Curve', url: 'https://curve.fi', iconUrl: 'https://unavatar.io/curve.fi', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '30', name: '1inch', url: 'https://app.1inch.io', iconUrl: 'https://unavatar.io/1inch.io', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '31', name: 'SushiSwap', url: 'https://sushi.com', iconUrl: 'https://unavatar.io/sushi.com', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '32', name: 'PancakeSwap', url: 'https://pancakeswap.finance', iconUrl: 'https://unavatar.io/pancakeswap.finance', category: 'Dex', isCustom: false, isFavorite: false },
 ];
 
 export const appHints: Record<string, string> = {
@@ -47,4 +52,9 @@ export const appHints: Record<string, string> = {
   'Eggs Finance': 'defi protocol',
   'SpookySwap': 'decentralized exchange',
   'Magpie Protocol': 'defi protocol',
+  'Aave': 'lending protocol',
+  'Curve': 'decentralized exchange',
+  '1inch': 'dex aggregator',
+  'SushiSwap': 'decentralized exchange',
+  'PancakeSwap': 'decentralized exchange',
 };

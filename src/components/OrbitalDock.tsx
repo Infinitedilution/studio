@@ -331,7 +331,11 @@ export function OrbitalDock() {
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-transparent backdrop-blur-xl border-t border-border/20">
+      <SheetContent
+        side="bottom"
+        className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-transparent backdrop-blur-xl border-t border-border/20"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <SheetHeader>
           <SheetTitle>Controls</SheetTitle>
         </SheetHeader>

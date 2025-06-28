@@ -67,14 +67,15 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
           whileHover={{ scale: 1.15, y: -4 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           className="relative"
+          style={{ width: iconSize, height: iconSize }}
         >
           <Image
             src={app.iconUrl}
             alt={`${app.name} icon`}
-            width={iconSize}
-            height={iconSize}
+            fill
+            sizes={`${iconSize}px`}
             data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
-            className="aspect-square rounded-2xl shadow-md group-hover:shadow-xl transition-shadow duration-300 bg-card object-cover"
+            className="rounded-2xl shadow-md group-hover:shadow-xl transition-shadow duration-300 bg-card object-cover"
           />
           <div className="absolute inset-0 rounded-2xl bg-black/5 group-hover:bg-black/0 transition-colors" />
         </motion.div>

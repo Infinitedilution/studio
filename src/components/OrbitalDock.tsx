@@ -172,6 +172,7 @@ export function OrbitalDock() {
             </header>
             
             <motion.div
+              layout
               className={cn("grid gap-x-4 gap-y-8", gridCols)}
             >
               <AnimatePresence>
@@ -227,14 +228,22 @@ export function OrbitalDock() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.5 }}
                       >
-                          <Image
-                              src={app.iconUrl}
-                              alt={`${app.name} icon`}
-                              width={settings.iconSize * 0.7}
-                              height={settings.iconSize * 0.7}
-                              data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
-                              className="rounded-lg bg-card object-cover"
-                          />
+                          <div
+                            style={{
+                              width: settings.iconSize * 0.7,
+                              height: settings.iconSize * 0.7,
+                            }}
+                            className="relative"
+                          >
+                            <Image
+                                src={app.iconUrl}
+                                alt={`${app.name} icon`}
+                                fill
+                                sizes={`${settings.iconSize * 0.7}px`}
+                                data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
+                                className="rounded-lg bg-card object-cover"
+                            />
+                          </div>
                           <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                               {app.name}
                           </span>

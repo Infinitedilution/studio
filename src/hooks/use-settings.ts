@@ -57,7 +57,6 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
       // Clear all dynamic background/pattern classes and styles
       body.className = body.className.split(' ').filter(c => !c.startsWith('bg-') && c !== 'glow').join(' ');
       body.style.backgroundImage = '';
-      body.style.boxShadow = '';
       body.style.backgroundColor = `hsl(var(--background))`;
 
       // Set pattern variables for dots/blueprint to use

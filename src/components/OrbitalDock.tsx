@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,9 +34,8 @@ import { EditAppDialog } from './EditAppDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from "next-themes";
-import { Slider } from './ui/slider';
 import { Label } from './ui/label';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile, useWindowSize } from '@/hooks/use-mobile';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -57,6 +56,13 @@ export function OrbitalDock() {
   
   const isMobile = useIsMobile();
   const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
+
+  const mainRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const windowSize = useWindowSize();
+  const debouncedSize = useDebounce(windowSize, 250);
+  const [appsPerPage, setAppsPerPage] = useState(30);
 
   const changePage = (newPage: number) => {
     if (newPage === currentPage) return;
@@ -111,6 +117,9 @@ export function OrbitalDock() {
 
   const handleToggleWiggleMode = () => {
     setIsWiggleMode(prev => !prev);
+    if (isMobile) {
+      setIsMobileSheetOpen(false);
+    }
   }
   
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
@@ -123,14 +132,45 @@ export function OrbitalDock() {
     });
   }, [apps, debouncedSearchQuery, selectedCategory]);
 
-  const APPS_PER_PAGE = 30;
-  const totalPages = Math.ceil(filteredApps.length / APPS_PER_PAGE);
+  useLayoutEffect(() => {
+    const calculateAppsPerPage = () => {
+      if (!mainRef.current || !headerRef.current || !gridRef.current) return;
+      
+      const mainStyle = getComputedStyle(mainRef.current);
+      const mainPaddingTop = parseFloat(mainStyle.paddingTop);
+      const mainPaddingBottom = parseFloat(mainStyle.paddingBottom);
+      
+      const availableHeight = mainRef.current.offsetHeight - mainPaddingTop - mainPaddingBottom;
+      
+      const iconContainerHeight = settings.iconSize + 24; // iconSize + text height + gap, estimated
+      const gridRowGap = 32; // from gap-y-8 (2rem)
+
+      const numRows = Math.max(1, Math.floor((availableHeight + gridRowGap) / (iconContainerHeight + gridRowGap)));
+      
+      const gridComputedStyle = getComputedStyle(gridRef.current);
+      const numCols = gridComputedStyle.gridTemplateColumns.split(' ').length;
+      
+      if (numRows > 0 && numCols > 0) {
+        setAppsPerPage(numRows * numCols);
+      }
+    };
+    
+    calculateAppsPerPage();
+  }, [debouncedSize, settings.iconSize, filteredApps]);
+
+  const totalPages = useMemo(() => Math.ceil(filteredApps.length / appsPerPage), [filteredApps, appsPerPage]);
+  
+  useEffect(() => {
+    if (currentPage >= totalPages && totalPages > 0) {
+      setCurrentPage(totalPages - 1);
+    }
+  }, [totalPages, currentPage]);
 
   const paginatedApps = useMemo(() => {
-    const startIndex = currentPage * APPS_PER_PAGE;
-    const endIndex = startIndex + APPS_PER_PAGE;
+    const startIndex = currentPage * appsPerPage;
+    const endIndex = startIndex + appsPerPage;
     return filteredApps.slice(startIndex, endIndex);
-  }, [filteredApps, currentPage]);
+  }, [filteredApps, currentPage, appsPerPage]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -155,8 +195,6 @@ export function OrbitalDock() {
   };
   
   const handleDragEnd = (e: any, { offset, velocity }: { offset: { x: number; y: number }; velocity: { x: number; y: number } }) => {
-    if (!isMobile) return;
-
     const swipePower = Math.abs(offset.x) * velocity.x;
     const swipeConfidenceThreshold = 10000;
 
@@ -275,7 +313,7 @@ export function OrbitalDock() {
   const mobileControls = (
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
-        <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
+        <Button size="icon" className={cn('rounded-full h-10 w-10 p-1.5', glassStyle, borderStyle)}>
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
               <defs>
                   <linearGradient id="icon-gradient" x1="12" y1="32" x2="52" y2="32" gradientUnits="userSpaceOnUse">
@@ -283,7 +321,7 @@ export function OrbitalDock() {
                       <stop offset="1" stopColor="#3B82F6"/>
                   </linearGradient>
               </defs>
-              <circle cx="32" cy="32" r="31" fill="black" stroke="url(#icon-gradient)" strokeWidth="2"/>
+              <circle cx="32" cy="32" r="31" stroke="url(#icon-gradient)" strokeWidth="3" fill="transparent"/>
               <g stroke="url(#icon-gradient)" strokeWidth="4" strokeLinecap="round">
                   <path d="M18 24 C 26 18, 38 18, 46 24" />
                   <path d="M16 32 H 48" />
@@ -344,10 +382,7 @@ export function OrbitalDock() {
           <div className="grid grid-cols-3 gap-2">
             <Button
               size="icon"
-              onClick={() => {
-                handleToggleWiggleMode();
-                setIsMobileSheetOpen(false);
-              }}
+              onClick={handleToggleWiggleMode}
               className={cn(`rounded-full transition-colors h-12 w-full`, mobileSheetGlassStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
               aria-pressed={isWiggleMode}
               title="Toggle edit mode"
@@ -369,23 +404,24 @@ export function OrbitalDock() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
-      <header className="flex flex-row items-center justify-between pt-8 mb-8 px-4 md:flex-col md:justify-center md:text-center md:pt-12 md:mb-10 md:gap-6">
+      <header ref={headerRef} className="flex flex-row items-center justify-between pt-8 mb-8 px-4 md:flex-col md:justify-center md:text-center md:pt-12 md:mb-10 md:gap-6">
         <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Wiki</h1>
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 
-      <main className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto overflow-x-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden">
+      <main ref={mainRef} className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden">
+        <div className="max-w-7xl mx-auto h-full">
+          <div className="relative overflow-hidden h-full">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
+                ref={gridRef}
                 key={currentPage}
                 custom={direction}
                 variants={pageVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                drag={isMobile ? "x" : false}
+                drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.1}
                 onDragEnd={handleDragEnd}
@@ -407,19 +443,18 @@ export function OrbitalDock() {
           </div>
 
             {totalPages > 1 && (
-              <div className="mt-12 flex flex-col items-center justify-center gap-4">
-                <Label htmlFor="page-slider" className="font-medium text-foreground/80">
-                  Page {currentPage + 1} of {totalPages}
-                </Label>
-                <Slider
-                  id="page-slider"
-                  min={0}
-                  max={totalPages - 1}
-                  step={1}
-                  value={[currentPage]}
-                  onValueChange={(value) => changePage(value[0])}
-                  className="w-full max-w-sm"
-                />
+              <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-2">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => changePage(i)}
+                    className={cn(
+                      "h-2 w-2 rounded-full transition-colors",
+                      i === currentPage ? 'bg-primary' : 'bg-muted-foreground/50 hover:bg-muted-foreground'
+                    )}
+                    aria-label={`Go to page ${i + 1}`}
+                  />
+                ))}
               </div>
             )}
 

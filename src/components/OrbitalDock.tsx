@@ -51,10 +51,19 @@ export function OrbitalDock() {
   const { theme, setTheme } = useTheme();
   const [isAddAppDialogOpen, setIsAddAppDialogOpen] = useState(false);
   const [addAppInitialValue, setAddAppInitialValue] = useState<string | undefined>();
+  
   const [currentPage, setCurrentPage] = useState(0);
+  const [direction, setDirection] = useState(0);
+  
   const isMobile = useIsMobile();
   const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
+  const changePage = (newPage: number) => {
+    if (newPage === currentPage) return;
+    setDirection(newPage > currentPage ? 1 : -1);
+    setCurrentPage(newPage);
+  };
+  
   useEffect(() => {
     try {
       const storedAppsJSON = localStorage.getItem('orbital-dock-apps');
@@ -97,6 +106,7 @@ export function OrbitalDock() {
   
   useEffect(() => {
     setCurrentPage(0);
+    setDirection(0);
   }, [debouncedSearchQuery, selectedCategory]);
 
   const handleToggleWiggleMode = () => {
@@ -143,6 +153,47 @@ export function OrbitalDock() {
   const toggleFavorite = (id: string) => {
     setApps(prev => prev.map(app => app.id === id ? { ...app, isFavorite: !app.isFavorite } : app));
   };
+  
+  const handleDragEnd = (e: any, { offset, velocity }: { offset: { x: number; y: number }; velocity: { x: number; y: number } }) => {
+    if (!isMobile) return;
+
+    const swipePower = Math.abs(offset.x) * velocity.x;
+    const swipeConfidenceThreshold = 10000;
+
+    if (swipePower < -swipeConfidenceThreshold) {
+      if (currentPage < totalPages - 1) {
+        changePage(currentPage + 1);
+      }
+    } else if (swipePower > swipeConfidenceThreshold) {
+      if (currentPage > 0) {
+        changePage(currentPage - 1);
+      }
+    }
+  };
+
+  const pageVariants = {
+    enter: (direction: number) => ({
+      x: direction !== 0 ? (direction > 0 ? '100%' : '-100%') : 0,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 },
+      },
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0,
+      transition: {
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 },
+      },
+    }),
+  };
+
 
   if (!isMounted) {
     return (
@@ -323,28 +374,37 @@ export function OrbitalDock() {
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 
-      <main className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto">
+      <main className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto overflow-x-hidden">
         <div className="max-w-7xl mx-auto">
-            <motion.div
-              layout
-              className={cn("grid gap-x-4 gap-y-8", gridCols)}
-            >
-              <AnimatePresence>
-              {paginatedApps.map((app) => (
-                <motion.div
-                  key={app.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.1 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="relative z-0"
-                >
-                  <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
-                </motion.div>
-              ))}
-              </AnimatePresence>
-            </motion.div>
+          <div className="relative overflow-hidden">
+            <AnimatePresence initial={false} custom={direction}>
+              <motion.div
+                key={currentPage}
+                custom={direction}
+                variants={pageVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                drag={isMobile ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.1}
+                onDragEnd={handleDragEnd}
+                className={cn("grid gap-x-4 gap-y-8", gridCols)}
+              >
+                {paginatedApps.map((app) => (
+                  <AppIcon
+                    key={app.id}
+                    app={app}
+                    isWiggleMode={isWiggleMode}
+                    onDelete={deleteApp}
+                    onEdit={setEditingApp}
+                    onToggleFavorite={toggleFavorite}
+                    iconSize={settings.iconSize}
+                  />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
             {totalPages > 1 && (
               <div className="mt-12 flex flex-col items-center justify-center gap-4">
@@ -357,7 +417,7 @@ export function OrbitalDock() {
                   max={totalPages - 1}
                   step={1}
                   value={[currentPage]}
-                  onValueChange={(value) => setCurrentPage(value[0])}
+                  onValueChange={(value) => changePage(value[0])}
                   className="w-full max-w-sm"
                 />
               </div>
@@ -460,5 +520,3 @@ export function OrbitalDock() {
     </div>
   );
 }
-
-    

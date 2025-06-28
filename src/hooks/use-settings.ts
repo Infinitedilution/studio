@@ -7,6 +7,7 @@ const SETTINGS_KEY = 'orbital-dock-settings';
 
 const defaultSettings: Settings = {
   iconSize: 80,
+  dockIconSize: 64,
 };
 
 interface SettingsContextType {

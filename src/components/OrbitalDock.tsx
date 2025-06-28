@@ -133,7 +133,7 @@ export function OrbitalDock() {
       <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
-                <h1 className="text-6xl font-headline font-medium text-foreground">Sonic Dapps</h1>
+                <h1 className="text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -281,8 +281,8 @@ export function OrbitalDock() {
                       >
                           <div
                             style={{
-                              width: settings.iconSize * 0.9,
-                              height: settings.iconSize * 0.9,
+                              width: settings.dockIconSize,
+                              height: settings.dockIconSize,
                             }}
                             className="relative"
                           >
@@ -302,7 +302,10 @@ export function OrbitalDock() {
                   ))}
                 </AnimatePresence>
                 {favoriteApps.length === 0 && (
-                  <div className="h-[72px] flex items-center justify-center px-4 text-sm text-muted-foreground">
+                  <div 
+                    className="flex items-center justify-center px-4 text-sm text-muted-foreground"
+                    style={{ height: settings.dockIconSize }}
+                  >
                     Favorite apps to add them to the dock
                   </div>
                 )}

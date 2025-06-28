@@ -27,7 +27,7 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
         </DialogHeader>
         <div className="grid gap-6 py-4">
           <div className="grid gap-4">
-            <Label htmlFor="icon-size">Icon Size: {settings.iconSize}px</Label>
+            <Label htmlFor="icon-size">Grid Icon Size: {settings.iconSize}px</Label>
             <Slider
               id="icon-size"
               min={48}
@@ -35,6 +35,17 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
               step={8}
               value={[settings.iconSize]}
               onValueChange={(value) => setSetting("iconSize", value[0])}
+            />
+          </div>
+          <div className="grid gap-4">
+            <Label htmlFor="dock-icon-size">Dock Icon Size: {settings.dockIconSize}px</Label>
+            <Slider
+              id="dock-icon-size"
+              min={32}
+              max={96}
+              step={4}
+              value={[settings.dockIconSize]}
+              onValueChange={(value) => setSetting("dockIconSize", value[0])}
             />
           </div>
           <Separator />

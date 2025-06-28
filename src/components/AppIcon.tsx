@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Pencil, X, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,12 @@ interface AppIconProps {
 }
 
 export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite, iconSize }: AppIconProps) {
+  const handleButtonClick = (e: React.MouseEvent, action: () => void) => {
+    e.preventDefault();
+    e.stopPropagation();
+    action();
+  };
+  
   return (
     <motion.div
       className={cn(
@@ -32,7 +39,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
             variant="ghost"
             size="icon"
             className="h-6 w-6 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
-            onClick={() => onToggleFavorite(app.id)}
+            onClick={(e) => handleButtonClick(e, () => onToggleFavorite(app.id))}
             aria-label={`Favorite ${app.name}`}
           >
             <Star className={cn("h-4 w-4", app.isFavorite ? "fill-primary text-primary" : "text-foreground/60")} />
@@ -46,7 +53,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
-                onClick={() => onEdit(app)}
+                onClick={(e) => handleButtonClick(e, () => onEdit(app))}
                 aria-label={`Edit ${app.name}`}
             >
                 <Pencil className="h-3 w-3" />
@@ -55,14 +62,14 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
               variant="destructive"
               size="icon"
               className="h-6 w-6 rounded-full shadow-lg"
-              onClick={() => onDelete(app.id)}
+              onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
               aria-label={`Delete ${app.name}`}
             >
               <X className="h-4 w-4" />
             </Button>
         </div>
       )}
-      <a href={app.url} target="_blank" rel="noopener noreferrer" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
+      <Link href={`/app/${app.id}`} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
         <motion.div
           whileHover={{ scale: 1.15, y: -4 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -75,12 +82,12 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
             fill
             sizes={`${iconSize}px`}
             data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
-            className="rounded-2xl bg-card object-cover transition-all [filter:drop-shadow(0_4px_6px_rgba(0,0,0,0.15))] group-hover:[filter:drop-shadow(0_10px_15px_rgba(0,0,0,0.15))] dark:[filter:drop-shadow(0_2px_4px_rgba(0,0,0,0.5))] dark:group-hover:[filter:drop-shadow(0_4px_8px_rgba(0,0,0,0.6))]"
+            className="rounded-2xl bg-card object-cover shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-lg dark:shadow-[0_4px_8px_rgba(0,0,0,0.4)] dark:group-hover:shadow-xl transition-shadow"
           />
           <div className="absolute inset-0 rounded-2xl bg-black/5 group-hover:bg-black/0 transition-colors" />
         </motion.div>
-      </a>
-      <p className="text-[11px] leading-tight pt-1 font-medium text-foreground/90 truncate w-full">{app.name}</p>
+      </Link>
+      <p className="text-[11px] leading-tight pt-1 font-medium text-foreground/90 dark:text-foreground/80 truncate w-full">{app.name}</p>
     </motion.div>
   );
 }

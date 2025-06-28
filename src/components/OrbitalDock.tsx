@@ -292,8 +292,8 @@ export function OrbitalDock() {
                             <Image
                                 src={app.iconUrl}
                                 alt={`${app.name} icon`}
-                                fill
-                                sizes={`${settings.iconSize * 0.9}px`}
+                                width={128}
+                                height={128}
                                 data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
                                 className="rounded-lg bg-card object-cover"
                             />

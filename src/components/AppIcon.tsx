@@ -84,8 +84,8 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
           <Image
             src={app.iconUrl}
             alt={`${app.name} icon`}
-            fill
-            sizes={`${iconSize}px`}
+            width={256}
+            height={256}
             data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
             className="rounded-2xl bg-card object-cover shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-lg dark:shadow-[0_4px_8px_rgba(0,0,0,0.4)] dark:group-hover:shadow-xl transition-shadow"
           />

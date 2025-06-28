@@ -73,7 +73,7 @@ export function OrbitalDock() {
     setIsWiggleMode(prev => !prev);
   }
   
-  const categories = useMemo(() => ['All', ...new Set(apps.map(app => app.category).sort())], [apps]);
+  const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
   const filteredApps = useMemo(() => {
     return apps.filter(app => {

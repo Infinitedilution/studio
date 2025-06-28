@@ -14,7 +14,7 @@ export const defaultApps: App[] = [
   { id: '16', name: 'dogwifhat', url: 'https://dogwifcoin.org/', iconUrl: 'https://icon.horse/icon/dogwifcoin.org', category: 'Memes', isCustom: false, isFavorite: false },
   { id: '17', name: 'Beets', url: 'https://beets.fi', iconUrl: 'https://icon.horse/icon/beets.fi', category: 'Dex', isCustom: false, isFavorite: false },
   { id: '18', name: 'Shadow Exchange', url: 'https://www.shadow.so', iconUrl: 'https://icon.horse/icon/shadow.so', category: 'Dex', isCustom: false, isFavorite: false },
-  { id: '19', name: 'SwapX', url: 'https://swapx.fi', iconUrl: 'https://icon.horse/icon/swapx.fi', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '19', name: 'SwapX', url: 'https://swapx.fi', iconUrl: 'https://www.google.com/s2/favicons?domain=swapx.fi&sz=256', category: 'Dex', isCustom: false, isFavorite: false },
   { id: '20', name: 'Rings', url: 'https://rings.money', iconUrl: 'https://icon.horse/icon/rings.money', category: 'DeFi', isCustom: false, isFavorite: false },
   { id: '21', name: 'Origin Protocol', url: 'https://www.originprotocol.com', iconUrl: 'https://icon.horse/icon/originprotocol.com', category: 'DeFi', isCustom: false, isFavorite: false },
   { id: '22', name: 'Pendle', url: 'https://pendle.finance', iconUrl: 'https://icon.horse/icon/pendle.finance', category: 'DeFi', isCustom: false, isFavorite: false },

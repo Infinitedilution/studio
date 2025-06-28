@@ -24,20 +24,24 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
     action();
   };
   
+  const transition = { duration: 0.2 };
+
   return (
     <motion.div
       className="relative flex flex-col items-center gap-1 text-center group"
       style={{ width: iconSize }}
       animate={isWiggleMode ? { rotate: [-1.5, 1.5, -1.5], transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" } } : { rotate: 0 }}
     >
-      <div className="absolute top-1 left-1 z-10">
-        <AnimatePresence>
+      <AnimatePresence>
         {isWiggleMode && (
+          <>
             <motion.div
+              key="favorite-button"
+              className="absolute top-1 left-1 z-10"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
-              transition={{ duration: 0.2 }}
+              transition={transition}
             >
               <Button
                 variant="ghost"
@@ -49,19 +53,15 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
                 <Star className={cn("h-3 w-3", app.isFavorite ? "fill-primary text-primary" : "text-foreground/60")} />
               </Button>
             </motion.div>
-        )}
-        </AnimatePresence>
-      </div>
 
-      <AnimatePresence>
-        {isWiggleMode && (
-          <motion.div 
+            <motion.div
+              key="edit-delete-buttons"
               className="absolute top-1 right-1 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
-              transition={{ duration: 0.2 }}
-          >
+              transition={transition}
+            >
               <Button
                   variant="ghost"
                   size="icon"
@@ -71,18 +71,30 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
               >
                   <Pencil className="h-3 w-3" />
               </Button>
-              {app.isCustom && (
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="h-5 w-5 rounded-full shadow-lg"
-                  onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
-                  aria-label={`Delete ${app.name}`}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              )}
-          </motion.div>
+              <AnimatePresence>
+                {app.isCustom && (
+                  <motion.div
+                    layout
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 'auto', opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={transition}
+                    className="overflow-hidden"
+                  >
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="h-5 w-5 rounded-full shadow-lg"
+                      onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
+                      aria-label={`Delete ${app.name}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 

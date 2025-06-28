@@ -27,6 +27,8 @@ import { EditAppDialog } from './EditAppDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from "next-themes";
+import { Slider } from './ui/slider';
+import { Label } from './ui/label';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -41,7 +43,7 @@ export function OrbitalDock() {
   const { theme, setTheme } = useTheme();
   const [isAddAppDialogOpen, setIsAddAppDialogOpen] = useState(false);
   const [addAppInitialValue, setAddAppInitialValue] = useState<string | undefined>();
-
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     try {
@@ -82,6 +84,10 @@ export function OrbitalDock() {
       localStorage.setItem('orbital-dock-apps', JSON.stringify(apps));
     }
   }, [apps, isMounted]);
+  
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [debouncedSearchQuery, selectedCategory]);
 
   const handleToggleWiggleMode = () => {
     setIsWiggleMode(prev => !prev);
@@ -96,6 +102,15 @@ export function OrbitalDock() {
       return matchesCategory && matchesSearch;
     });
   }, [apps, debouncedSearchQuery, selectedCategory]);
+
+  const APPS_PER_PAGE = 30;
+  const totalPages = Math.ceil(filteredApps.length / APPS_PER_PAGE);
+
+  const paginatedApps = useMemo(() => {
+    const startIndex = currentPage * APPS_PER_PAGE;
+    const endIndex = startIndex + APPS_PER_PAGE;
+    return filteredApps.slice(startIndex, endIndex);
+  }, [filteredApps, currentPage]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -131,7 +146,7 @@ export function OrbitalDock() {
 
   return (
     <div className="flex flex-col min-h-screen transition-colors duration-300">
-      <main className="flex-grow pt-12 pb-64 px-4 sm:px-8 md:px-12">
+      <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
                 <h1 className="text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>
@@ -203,7 +218,7 @@ export function OrbitalDock() {
               className={cn("grid gap-x-4 gap-y-8", gridCols)}
             >
               <AnimatePresence>
-              {filteredApps.map((app) => (
+              {paginatedApps.map((app) => (
                 <motion.div
                   key={app.id}
                   layout
@@ -218,6 +233,23 @@ export function OrbitalDock() {
               ))}
               </AnimatePresence>
             </motion.div>
+
+            {totalPages > 1 && (
+              <div className="mt-12 flex flex-col items-center justify-center gap-4">
+                <Label htmlFor="page-slider" className="font-medium text-foreground/80">
+                  Page {currentPage + 1} of {totalPages}
+                </Label>
+                <Slider
+                  id="page-slider"
+                  min={0}
+                  max={totalPages - 1}
+                  step={1}
+                  value={[currentPage]}
+                  onValueChange={(value) => setCurrentPage(value[0])}
+                  className="w-full max-w-sm"
+                />
+              </div>
+            )}
 
             {filteredApps.length === 0 && !isWiggleMode && (
                 <div className="text-center py-16 text-muted-foreground">

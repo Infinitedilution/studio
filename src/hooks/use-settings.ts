@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, createContext, useContext, createElement } from 'react';
+import { useState, useEffect, createContext, useContext, createElement } from 'react';
 import type { Settings } from '@/lib/types';
 
 const SETTINGS_KEY = 'orbital-dock-settings';
@@ -50,9 +50,9 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     }
   }, [settings, isMounted]);
 
-  const setSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
+  const setSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings(prev => ({ ...prev, [key]: value }));
-  }, []);
+  };
 
   const value = { settings, setSetting };
 

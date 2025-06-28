@@ -26,11 +26,9 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
   
   return (
     <motion.div
-      className={cn(
-        "relative flex flex-col items-center gap-1 text-center group",
-        isWiggleMode && "animate-wiggle"
-      )}
+      className="relative flex flex-col items-center gap-1 text-center group"
       style={{ width: iconSize }}
+      animate={isWiggleMode ? { rotate: [-1.5, 1.5, -1.5], transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" } } : { rotate: 0 }}
     >
       <div className="absolute top-1 left-1 z-10">
         {isWiggleMode && (

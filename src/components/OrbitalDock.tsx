@@ -308,7 +308,7 @@ export function OrbitalDock() {
   return (
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
       <header className="flex flex-row items-center justify-between pt-8 mb-8 px-4 md:flex-col md:justify-center md:text-center md:pt-12 md:mb-10 md:gap-6">
-        <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Dapps</h1>
+        <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Wiki</h1>
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 

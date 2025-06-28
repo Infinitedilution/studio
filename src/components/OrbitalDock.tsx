@@ -43,22 +43,31 @@ export function OrbitalDock() {
 
   useEffect(() => {
     try {
-      const storedApps = localStorage.getItem('orbital-dock-apps');
-      if (storedApps) {
-        const parsedApps = JSON.parse(storedApps);
-        if (Array.isArray(parsedApps)) {
-          const validApps = parsedApps.filter(app => 
-            app && typeof app.id === 'string' && typeof app.name === 'string' &&
-            typeof app.url === 'string' && typeof app.iconUrl === 'string' &&
-            typeof app.category === 'string'
-          );
-          setApps(validApps);
-        } else {
-          setApps(defaultApps);
+      const storedAppsJSON = localStorage.getItem('orbital-dock-apps');
+      let finalApps: App[] = defaultApps;
+
+      if (storedAppsJSON) {
+        const storedApps = JSON.parse(storedAppsJSON);
+        if (Array.isArray(storedApps)) {
+          const customApps = storedApps.filter(app => app.isCustom === true);
+
+          const favoriteStatusMap = new Map<string, boolean>();
+          storedApps.forEach(app => {
+            if (app && app.id) {
+              favoriteStatusMap.set(app.id, app.isFavorite);
+            }
+          });
+
+          const updatedDefaultApps = defaultApps.map(app => ({
+            ...app,
+            isFavorite: favoriteStatusMap.get(app.id) ?? app.isFavorite,
+          }));
+          
+          finalApps = [...updatedDefaultApps, ...customApps];
         }
-      } else {
-        setApps(defaultApps);
       }
+      
+      setApps(finalApps);
     } catch (error) {
       console.error("Failed to parse apps from localStorage", error);
       setApps(defaultApps);
@@ -115,7 +124,7 @@ export function OrbitalDock() {
   }
 
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
-  const glassStyle = "text-foreground border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
+  const glassStyle = "text-foreground bg-background/80 backdrop-blur-sm border-border hover:bg-background/90";
   const lightBorderStyle = "border-slate-400";
 
   return (
@@ -127,7 +136,7 @@ export function OrbitalDock() {
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, lightBorderStyle)} disabled={isWiggleMode}>
+                            <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")} disabled={isWiggleMode}>
                                 <Filter className="h-5 w-5" />
                                 <span className="sr-only">Filter by category</span>
                             </Button>
@@ -151,7 +160,7 @@ export function OrbitalDock() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         disabled={isWiggleMode}
-                        className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, lightBorderStyle)}
+                        className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -159,18 +168,18 @@ export function OrbitalDock() {
                         <Button
                             size="icon"
                             onClick={handleToggleWiggleMode}
-                            className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, lightBorderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
                             aria-pressed={isWiggleMode}
                             title="Toggle edit mode"
                         >
                             <Grip className="h-5 w-5" />
                             <span className="sr-only">Toggle edit mode</span>
                         </Button>
-                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, lightBorderStyle)}>
+                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")}>
                             <SettingsIcon className="h-5 w-5" />
                              <span className="sr-only">Open Settings</span>
                         </Button>
-                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, lightBorderStyle)}>
+                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")}>
                             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                             <span className="sr-only">Toggle theme</span>
@@ -217,7 +226,7 @@ export function OrbitalDock() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
-            className="bg-background/80 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto"
+            className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto"
         >
             <div className="flex items-end gap-3 p-1">
                 <AnimatePresence>
@@ -269,3 +278,5 @@ export function OrbitalDock() {
     </div>
   );
 }
+
+    

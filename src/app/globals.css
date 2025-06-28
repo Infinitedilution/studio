@@ -66,10 +66,11 @@
     @apply bg-background text-foreground;
     --gradient-start: hsl(var(--primary));
     --gradient-mid: hsl(var(--accent));
+    --gradient-extra: hsl(var(--chart-3));
     --gradient-end: hsl(var(--secondary));
     
-    background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end), var(--gradient-mid));
-    background-size: 400% 400%;
+    background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-mid), var(--gradient-extra), var(--gradient-end), var(--gradient-start));
+    background-size: 600% 600%;
     @apply animate-animated-gradient;
   }
 }

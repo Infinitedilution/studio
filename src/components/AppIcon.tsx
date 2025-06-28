@@ -18,7 +18,6 @@ interface AppIconProps {
 export function AppIcon({ app, isWiggleMode, onEdit, onDelete }: AppIconProps) {
   return (
     <motion.div
-      layout
       className={cn(
         "relative flex flex-col items-center gap-2 text-center w-20 group",
         isWiggleMode && "animate-wiggle"

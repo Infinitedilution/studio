@@ -12,6 +12,6 @@ export interface Settings {
   iconSize: number;
   dockIconSize: number;
   showBackgroundPattern: boolean;
-  primaryColor: string;
-  accentColor: string;
+  useCustomGradient: boolean;
+  gradientIndex: number;
 }

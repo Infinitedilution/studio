@@ -13,9 +13,19 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "./ui/separator";
 import { ConnectWallet } from "./ConnectWallet";
 import { Switch } from "./ui/switch";
+import { Button } from "./ui/button";
+import { Shuffle } from "lucide-react";
+import { PRESET_GRADIENTS } from "@/lib/gradients";
 
 export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
   const { settings, setSetting } = useSettings();
+
+  const handleRandomGradient = () => {
+    const randomIndex = Math.floor(Math.random() * PRESET_GRADIENTS.length);
+    setSetting("gradientIndex", randomIndex);
+  };
+
+  const currentGradientName = PRESET_GRADIENTS[settings.gradientIndex]?.name || 'Default';
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -56,31 +66,34 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
            <div className="grid gap-4">
             <h3 className="font-medium text-sm text-muted-foreground">Theme</h3>
             <div className="flex items-center justify-between">
-              <Label htmlFor="primary-color">Primary Color</Label>
-              <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono text-muted-foreground">{settings.primaryColor}</span>
-                  <input
-                      id="primary-color"
-                      type="color"
-                      value={settings.primaryColor}
-                      onChange={(e) => setSetting("primaryColor", e.target.value)}
-                      className="h-8 w-10 p-1 bg-transparent border rounded-md cursor-pointer"
-                  />
-              </div>
+              <Label htmlFor="custom-gradient" className="pr-4">Use Custom Gradient</Label>
+              <Switch
+                  id="custom-gradient"
+                  checked={settings.useCustomGradient}
+                  onCheckedChange={(value) => setSetting("useCustomGradient", value)}
+              />
             </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="accent-color">Accent Color</Label>
-              <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono text-muted-foreground">{settings.accentColor}</span>
-                  <input
-                      id="accent-color"
-                      type="color"
-                      value={settings.accentColor}
-                      onChange={(e) => setSetting("accentColor", e.target.value)}
-                      className="h-8 w-10 p-1 bg-transparent border rounded-md cursor-pointer"
-                  />
+
+            {settings.useCustomGradient && (
+              <div className="grid gap-4 pt-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="gradient-slider">Gradient: {currentGradientName}</Label>
+                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleRandomGradient}>
+                      <Shuffle className="h-4 w-4" />
+                      <span className="sr-only">Randomize Gradient</span>
+                    </Button>
+                </div>
+                <Slider
+                  id="gradient-slider"
+                  min={0}
+                  max={PRESET_GRADIENTS.length - 1}
+                  step={1}
+                  value={[settings.gradientIndex]}
+                  onValueChange={(value) => setSetting("gradientIndex", value[0])}
+                />
               </div>
-            </div>
+            )}
+
             <div className="flex items-center justify-between">
               <Label htmlFor="background-pattern" className="pr-4">Show Background Pattern</Label>
               <Switch

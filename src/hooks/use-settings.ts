@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, createElement } from 'react';
 import type { Settings } from '@/lib/types';
-import { hexToHsl } from '@/lib/utils';
+import { PRESET_GRADIENTS } from '@/lib/gradients';
 
 const SETTINGS_KEY = 'orbital-dock-settings';
 
@@ -10,8 +10,8 @@ const defaultSettings: Settings = {
   iconSize: 80,
   dockIconSize: 64,
   showBackgroundPattern: true,
-  primaryColor: '#3b82f6',
-  accentColor: '#9333ea',
+  useCustomGradient: false,
+  gradientIndex: 0,
 };
 
 interface SettingsContextType {
@@ -63,25 +63,25 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
         styleElement.id = styleElementId;
         document.head.appendChild(styleElement);
     }
-
-    const primaryHsl = hexToHsl(settings.primaryColor);
-    const accentHsl = hexToHsl(settings.accentColor);
     
-    // Only apply overrides if colors are valid hex
-    if (primaryHsl || accentHsl) {
-      let css = '.dark {';
-      if (primaryHsl) {
-          css += `--primary: ${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%;`;
-          css += `--ring: ${primaryHsl.h} ${primaryHsl.s}% ${primaryHsl.l}%;`;
-      }
-      if (accentHsl) {
-          css += `--accent: ${accentHsl.h} ${accentHsl.s}% ${accentHsl.l}%;`;
-      }
-      css += '}';
-      styleElement.innerHTML = css;
+    let css = '';
+    if (settings.useCustomGradient) {
+        const gradient = PRESET_GRADIENTS[settings.gradientIndex];
+        if (gradient) {
+            const [start, mid, extra, end] = gradient.colors;
+            css = `
+            body {
+                --gradient-start: ${start};
+                --gradient-mid: ${mid};
+                --gradient-extra: ${extra};
+                --gradient-end: ${end};
+            }
+            `;
+        }
     }
+    styleElement.innerHTML = css;
 
-  }, [settings.primaryColor, settings.accentColor, isMounted]);
+  }, [settings.useCustomGradient, settings.gradientIndex, isMounted]);
 
   const setSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings(prev => ({ ...prev, [key]: value }));

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus, Menu } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -131,18 +131,18 @@ export function OrbitalDock() {
     setApps(prev => [...prev, appToAdd]);
   };
 
-  const updateApp = useCallback((updatedApp: App) => {
+  const updateApp = (updatedApp: App) => {
     setApps(prev => prev.map(app => app.id === updatedApp.id ? updatedApp : app));
     setEditingApp(null);
-  }, []);
+  };
 
-  const deleteApp = useCallback((id: string) => {
+  const deleteApp = (id: string) => {
     setApps(prev => prev.filter(app => app.id !== id));
-  }, []);
+  };
 
-  const toggleFavorite = useCallback((id: string) => {
+  const toggleFavorite = (id: string) => {
     setApps(prev => prev.map(app => app.id === id ? { ...app, isFavorite: !app.isFavorite } : app));
-  }, []);
+  };
 
   if (!isMounted) {
     return (
@@ -224,8 +224,10 @@ export function OrbitalDock() {
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
         <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Menu & Filters</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 stroke-current">
+            <path d="M4 6H20M4 12H20M4 18H20" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto">
@@ -298,7 +300,7 @@ export function OrbitalDock() {
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
       <header className="flex flex-row items-center justify-between pt-8 mb-8 px-4 md:flex-col md:justify-center md:text-center md:pt-12 md:mb-10 md:gap-6">
         <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Dapps</h1>
-        {isMobile ? mobileControls : desktopControls}
+        {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 
       <main className="flex-grow pb-48 px-4 sm:px-8 md:px-12 overflow-y-auto">

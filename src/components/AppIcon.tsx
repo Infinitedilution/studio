@@ -32,12 +32,12 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
       )}
       style={{ width: iconSize }}
     >
-      <div className="absolute -top-2 -left-2 z-10">
+      <div className="absolute top-1 left-1 z-10">
         {isWiggleMode && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
+            className="h-6 w-6 rounded-full bg-background/50 backdrop-blur-sm text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
             onClick={(e) => handleButtonClick(e, () => onToggleFavorite(app.id))}
             aria-label={`Favorite ${app.name}`}
           >
@@ -47,7 +47,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
       </div>
 
       {app.isCustom && isWiggleMode && (
-         <div className="absolute -top-2 -right-2 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5">
+         <div className="absolute top-1 right-1 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5">
             <Button
                 variant="ghost"
                 size="icon"

@@ -143,7 +143,7 @@ export function OrbitalDock() {
             <Reorder.Group
               as="div"
               axis="xy"
-              values={apps}
+              values={displayedApps}
               onReorder={setApps}
               className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
             >

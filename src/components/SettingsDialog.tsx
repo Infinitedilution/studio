@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "./ui/separator";
 import { ConnectWallet } from "./ConnectWallet";
+import { Switch } from "./ui/switch";
 
 export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
   const { settings, setSetting } = useSettings();
@@ -46,6 +47,14 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
               step={4}
               value={[settings.dockIconSize]}
               onValueChange={(value) => setSetting("dockIconSize", value[0])}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="background-pattern" className="pr-4">Show Background Pattern</Label>
+            <Switch
+                id="background-pattern"
+                checked={settings.showBackgroundPattern}
+                onCheckedChange={(value) => setSetting("showBackgroundPattern", value)}
             />
           </div>
           <Separator />

@@ -72,5 +72,18 @@
     background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-mid), var(--gradient-extra), var(--gradient-end), var(--gradient-start));
     background-size: 600% 600%;
     @apply animate-animated-gradient;
+
+    position: relative;
+    isolation: isolate;
+  }
+
+  body.background-pattern-active::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: -1;
   }
 }

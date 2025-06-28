@@ -11,4 +11,5 @@ export interface App {
 export interface Settings {
   iconSize: number;
   dockIconSize: number;
+  showBackgroundPattern: boolean;
 }

@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SettingsProvider } from '@/hooks/use-settings';
 import { Web3Provider } from '@/components/Web3Provider';
+import { BodyStyler } from '@/components/BodyStyler';
 
 export const metadata: Metadata = {
   title: 'Orbital Dock',
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <Web3Provider>
           <SettingsProvider>
+            <BodyStyler />
             <ThemeProvider
               attribute="class"
               defaultTheme="dark"

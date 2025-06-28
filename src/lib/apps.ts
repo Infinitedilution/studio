@@ -12,6 +12,17 @@ export const defaultApps: App[] = [
   { id: '14', name: 'Coinbase', url: 'https://www.coinbase.com', iconUrl: 'https://unavatar.io/coinbase.com', category: 'Cex', isCustom: false, isFavorite: false },
   { id: '15', name: 'Axie Infinity', url: 'https://axieinfinity.com', iconUrl: 'https://unavatar.io/axieinfinity.com', category: 'Web3 Games', isCustom: false, isFavorite: false },
   { id: '16', name: 'dogwifhat', url: 'https://dogwifcoin.org/', iconUrl: 'https://unavatar.io/dogwifcoin.org', category: 'Memes', isCustom: false, isFavorite: false },
+  { id: '17', name: 'Beets', url: 'https://beets.fi', iconUrl: 'https://unavatar.io/beets.fi', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '18', name: 'Shadow Exchange', url: 'https://www.shadow.so', iconUrl: 'https://unavatar.io/shadow.so', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '19', name: 'SwapX', url: 'https://swapx.fi', iconUrl: 'https://unavatar.io/swapx.fi', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '20', name: 'Rings', url: 'https://rings.money', iconUrl: 'https://unavatar.io/rings.money', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '21', name: 'Origin Protocol', url: 'https://www.originprotocol.com', iconUrl: 'https://unavatar.io/originprotocol.com', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '22', name: 'Pendle', url: 'https://pendle.finance', iconUrl: 'https://unavatar.io/pendle.finance', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '23', name: 'Metropolis', url: 'https://metropolis.exchange', iconUrl: 'https://unavatar.io/metropolis.exchange', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '24', name: 'Silo Finance', url: 'https://www.silo.finance', iconUrl: 'https://unavatar.io/silo.finance', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '25', name: 'Eggs Finance', url: 'https://eggs.finance', iconUrl: 'https://unavatar.io/eggs.finance', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: '26', name: 'SpookySwap', url: 'https://spookyswap.app', iconUrl: 'https://unavatar.io/spookyswap.app', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '27', name: 'Magpie Protocol', url: 'https://magpie.xyz', iconUrl: 'https://unavatar.io/magpie.xyz', category: 'DeFi', isCustom: false, isFavorite: false },
 ];
 
 export const appHints: Record<string, string> = {
@@ -25,4 +36,15 @@ export const appHints: Record<string, string> = {
   'Coinbase': 'crypto exchange',
   'Axie Infinity': 'blockchain game',
   'dogwifhat': 'meme coin',
+  'Beets': 'decentralized exchange',
+  'Shadow Exchange': 'decentralized exchange',
+  'SwapX': 'decentralized exchange',
+  'Rings': 'defi protocol',
+  'Origin Protocol': 'defi protocol',
+  'Pendle': 'defi protocol',
+  'Metropolis': 'decentralized exchange',
+  'Silo Finance': 'lending protocol',
+  'Eggs Finance': 'defi protocol',
+  'SpookySwap': 'decentralized exchange',
+  'Magpie Protocol': 'defi protocol',
 };

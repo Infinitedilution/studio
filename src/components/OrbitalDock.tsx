@@ -163,13 +163,13 @@ export function OrbitalDock() {
               </Reorder.Group>
             ) : (
               <motion.div
-                layout
                 className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
               >
                 <AnimatePresence>
                   {filteredApps.map((app) => (
                     <motion.div
                       key={app.id}
+                      layout
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.5 }}

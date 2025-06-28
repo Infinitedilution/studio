@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -281,7 +282,10 @@ export function OrbitalDock() {
           <div className="grid grid-cols-3 gap-2">
             <Button
               size="icon"
-              onClick={handleToggleWiggleMode}
+              onClick={() => {
+                handleToggleWiggleMode();
+                setIsMobileSheetOpen(false);
+              }}
               className={cn(`rounded-full transition-colors h-12 w-full`, mobileSheetGlassStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
               aria-pressed={isWiggleMode}
               title="Toggle edit mode"
@@ -445,3 +449,5 @@ export function OrbitalDock() {
     </div>
   );
 }
+
+    

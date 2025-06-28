@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   url: z.string().url({ message: 'Please enter a valid URL.' }).refine(val => val.startsWith('https://'), { message: 'URL must be secure (https).' }),
-  iconUrl: z.string().url({ message: 'Please enter a valid image URL.' }),
+  iconUrl: z.string().url({ message: 'Icon must be a valid data URL.' }),
   category: z.string().min(2, { message: 'Category is required.' }),
 });
 
@@ -34,6 +35,8 @@ interface EditAppDialogProps {
 
 export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAppDialogProps) {
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [iconPreview, setIconPreview] = useState<string>(app.iconUrl);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,9 +54,27 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
         url: app.url,
         iconUrl: app.iconUrl,
         category: app.category,
-    })
-  }, [app, form]);
+    });
+    setIconPreview(app.iconUrl);
+  }, [app, form, isOpen]);
 
+
+  const handleIconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 1024 * 1024) { // 1MB limit
+        toast({ variant: 'destructive', title: 'File too large', description: 'Please select an image smaller than 1MB.' });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        setIconPreview(dataUrl);
+        form.setValue('iconUrl', dataUrl, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     onUpdateApp({ ...app, ...values });
@@ -79,7 +100,7 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
                 <FormItem>
                   <FormLabel>App URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com" {...field} />
+                    <Input placeholder="https://example.com" {...field} disabled={!app.isCustom} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,19 +119,24 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
                 </FormItem>
               )}
             />
-             <FormField
-              control={form.control}
-              name="iconUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Icon URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://example.com/icon.png" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormItem>
+              <FormLabel>Icon</FormLabel>
+              <div className="flex items-center gap-4">
+                  <Image src={iconPreview} alt="Icon preview" width={64} height={64} className="rounded-lg bg-card object-cover" />
+                  <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    Upload Icon
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleIconChange}
+                  />
+              </div>
+              <FormMessage>{form.formState.errors.iconUrl?.message}</FormMessage>
+            </FormItem>
+
             <FormField
               control={form.control}
               name="category"

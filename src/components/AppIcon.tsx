@@ -54,7 +54,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
       </div>
 
       <AnimatePresence>
-        {app.isCustom && isWiggleMode && (
+        {isWiggleMode && (
           <motion.div 
               className="absolute top-1 right-1 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5"
               initial={{ opacity: 0, scale: 0.5 }}
@@ -71,15 +71,17 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
               >
                   <Pencil className="h-3 w-3" />
               </Button>
-              <Button
-                variant="destructive"
-                size="icon"
-                className="h-5 w-5 rounded-full shadow-lg"
-                onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
-                aria-label={`Delete ${app.name}`}
-              >
-                <X className="h-3 w-3" />
-              </Button>
+              {app.isCustom && (
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="h-5 w-5 rounded-full shadow-lg"
+                  onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
+                  aria-label={`Delete ${app.name}`}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              )}
           </motion.div>
         )}
       </AnimatePresence>

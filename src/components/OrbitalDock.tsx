@@ -27,6 +27,7 @@ import { EditAppDialog } from './EditAppDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from "next-themes";
+import { ConnectWallet } from './ConnectWallet';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -125,7 +126,7 @@ export function OrbitalDock() {
 
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
   const glassStyle = "text-foreground bg-background/80 backdrop-blur-sm border-border hover:bg-background/90";
-  const lightBorderStyle = "border-slate-400";
+  const borderStyle = "border-slate-400 dark:border-white/20 dark:hover:bg-white/20";
 
   return (
     <div className="flex flex-col min-h-screen transition-colors duration-300">
@@ -136,7 +137,7 @@ export function OrbitalDock() {
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")} disabled={isWiggleMode}>
+                            <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, borderStyle)} disabled={isWiggleMode}>
                                 <Filter className="h-5 w-5" />
                                 <span className="sr-only">Filter by category</span>
                             </Button>
@@ -160,7 +161,7 @@ export function OrbitalDock() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         disabled={isWiggleMode}
-                        className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")}
+                        className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, borderStyle)}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -168,22 +169,23 @@ export function OrbitalDock() {
                         <Button
                             size="icon"
                             onClick={handleToggleWiggleMode}
-                            className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, borderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
                             aria-pressed={isWiggleMode}
                             title="Toggle edit mode"
                         >
                             <Grip className="h-5 w-5" />
                             <span className="sr-only">Toggle edit mode</span>
                         </Button>
-                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")}>
+                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
                             <SettingsIcon className="h-5 w-5" />
                              <span className="sr-only">Open Settings</span>
                         </Button>
-                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, "dark:border-white/20 dark:hover:bg-white/20 light:border-slate-400")}>
+                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
                             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                             <span className="sr-only">Toggle theme</span>
                         </Button>
+                        <ConnectWallet />
                     </div>
                 </div>
             </header>
@@ -278,5 +280,3 @@ export function OrbitalDock() {
     </div>
   );
 }
-
-    

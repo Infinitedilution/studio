@@ -103,7 +103,12 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
         target="_blank" 
         rel="noopener noreferrer" 
         className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
-        onClick={(e) => { if (isWiggleMode) e.preventDefault(); }}
+        onClick={(e) => { 
+            if (isWiggleMode) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }}
       >
         <motion.div
           whileHover={{ scale: isWiggleMode ? 1 : 1.15, y: isWiggleMode ? 0 : -4 }}

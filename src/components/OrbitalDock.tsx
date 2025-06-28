@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
@@ -121,6 +120,12 @@ export function OrbitalDock() {
       setIsMobileSheetOpen(false);
     }
   }
+
+  const handleBackgroundClick = () => {
+    if (isWiggleMode) {
+      setIsWiggleMode(false);
+    }
+  };
   
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
@@ -404,7 +409,11 @@ export function OrbitalDock() {
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 
-      <main ref={mainRef} className="flex-grow pb-36 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden">
+      <main 
+        ref={mainRef} 
+        className="flex-grow pb-36 px-4 sm:px-8 md:px-12 overflow-y-hidden overflow-x-hidden"
+        onClick={handleBackgroundClick}
+      >
         <div className="max-w-7xl mx-auto h-full">
           <div className="relative overflow-hidden h-full">
             <AnimatePresence initial={false} custom={direction}>

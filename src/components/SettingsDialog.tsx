@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Separator } from "./ui/separator";
+import { ConnectWallet } from "./ConnectWallet";
 
 export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
   const { settings, setSetting } = useSettings();
@@ -34,6 +36,11 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
               value={[settings.iconSize]}
               onValueChange={(value) => setSetting("iconSize", value[0])}
             />
+          </div>
+          <Separator />
+          <div className="grid gap-4">
+            <Label>Wallet</Label>
+            <ConnectWallet />
           </div>
         </div>
       </DialogContent>

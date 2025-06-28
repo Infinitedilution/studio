@@ -225,14 +225,20 @@ export function OrbitalDock() {
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
         <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
-            <circle cx="12" cy="12" r="12" fill="black" />
-            <path fillRule="evenodd" clipRule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z" fill="#8C6E63"/>
-            <path d="M8 9C10.5 10 14.5 10.5 17 11" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
-            <path d="M8 12C11.5 12 13.5 12 17 12" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
-            <path d="M8 15C10.5 14 14.5 13.5 17 13" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
-            <path d="M8 18C10.5 16.5 14.5 15 17 14" stroke="#8C6E63" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+                <defs>
+                    <linearGradient id="icon-gradient" x1="10.5" y1="32" x2="55.5" y2="32" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#F97316"/>
+                        <stop offset="1" stop-color="#3B82F6"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="32" cy="32" r="32" fill="black"/>
+                <g fill="url(#icon-gradient)">
+                    <path d="M12.5 19C15.5 18, 24.5 20.5, 39.5 24.5C41.1667 25.1667, 46.8 27.2, 53.5 28C49.5 27.5, 33.1667 24.5, 12.5 19Z"/>
+                    <path d="M10.5 32C24.5 31, 38.5 31, 55.5 32C50.5 33, 33.5 33, 10.5 32Z"/>
+                    <path d="M12.5 45C15.5 46, 24.5 43.5, 39.5 39.5C41.1667 38.8333, 46.8 36.8, 53.5 36C49.5 36.5, 33.1667 39.5, 12.5 45Z"/>
+                </g>
+            </svg>
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -72,18 +73,14 @@ export function OrbitalDock() {
     setIsWiggleMode(prev => !prev);
   }
   
-  const categories = useMemo(() => ['All', ...new Set(apps.map(app => app.category))], [apps]);
+  const categories = useMemo(() => ['All', ...new Set(apps.map(app => app.category).sort())], [apps]);
   
-  const displayedApps = useMemo(() => {
-    const filtersAreActive = debouncedSearchQuery !== '' || selectedCategory !== 'All';
-    if (filtersAreActive) {
-      return apps.filter(app => {
-        const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
-        const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-      });
-    }
-    return apps;
+  const filteredApps = useMemo(() => {
+    return apps.filter(app => {
+      const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
+      const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
   }, [apps, debouncedSearchQuery, selectedCategory]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
@@ -172,31 +169,29 @@ export function OrbitalDock() {
                 </div>
             </header>
             
-            <AnimatePresence>
-                {displayedApps.length > 0 && (
+            <motion.div
+                layout
+                className={cn("grid gap-x-4 gap-y-8", gridCols)}
+            >
+                <AnimatePresence>
+                    {filteredApps.map((app) => (
                     <motion.div
+                        key={app.id}
                         layout
-                        className={cn("grid gap-x-4 gap-y-8", gridCols)}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                        className="relative z-0"
                     >
-                        {displayedApps.map((app) => (
-                        <motion.div
-                            key={app.id}
-                            layout
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.5 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                            className="relative z-0"
-                        >
-                            <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
-                        </motion.div>
-                        ))}
+                        <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
                     </motion.div>
-                )}
-            </AnimatePresence>
+                    ))}
+                </AnimatePresence>
+            </motion.div>
 
 
-            {displayedApps.length === 0 && (
+            {filteredApps.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground">
                     <p className="text-lg">No apps found for "{debouncedSearchQuery || selectedCategory}"</p>
                 </div>

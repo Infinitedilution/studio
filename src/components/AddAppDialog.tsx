@@ -24,6 +24,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   url: z.string().url({ message: 'Please enter a valid URL.' }).refine(val => val.startsWith('https://'), { message: 'URL must be secure (https).' }),
   category: z.string().min(2, { message: 'Category is required.' }),
+  iconUrl: z.string().url({ message: 'Please enter a valid image URL.' }).optional().or(z.literal('')),
 });
 
 interface AddAppDialogProps {
@@ -39,7 +40,7 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: '', url: '', category: '' },
+    defaultValues: { name: '', url: '', category: '', iconUrl: '' },
   });
 
   const handleUrlBlur = useCallback(async () => {
@@ -61,8 +62,9 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
     if (isUrlValid) {
       setIsSuggesting(true);
       try {
-        const [categoryRes] = await Promise.all([
+        const [categoryRes, faviconRes] = await Promise.all([
             suggestCategoryAction(url),
+            getFaviconAction(url),
         ]);
 
         if(!form.getValues('name')) {
@@ -73,6 +75,9 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
         
         if (categoryRes.category) {
           form.setValue('category', categoryRes.category, { shouldValidate: true });
+        }
+        if (faviconRes.iconUrl) {
+          form.setValue('iconUrl', faviconRes.iconUrl, { shouldValidate: true });
         }
         
         if (categoryRes.error) {
@@ -88,7 +93,7 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
 
   useEffect(() => {
     if (!isOpen) {
-      form.reset({ name: '', url: '', category: '' });
+      form.reset({ name: '', url: '', category: '', iconUrl: '' });
       return;
     }
 
@@ -110,8 +115,13 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { iconUrl } = await getFaviconAction(values.url);
-    onAddApp({ ...values, iconUrl, isFavorite: false });
+    let finalIconUrl = values.iconUrl;
+    if (!finalIconUrl) {
+      const { iconUrl } = await getFaviconAction(values.url);
+      finalIconUrl = iconUrl;
+    }
+    
+    onAddApp({ ...values, iconUrl: finalIconUrl, isFavorite: false });
     form.reset();
     onOpenChange(false);
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });
@@ -149,6 +159,19 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
                   <FormLabel>App Name</FormLabel>
                   <FormControl>
                     <Input placeholder="My Awesome App" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="iconUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Icon URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., https://example.com/icon.png" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

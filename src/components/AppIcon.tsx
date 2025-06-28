@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Pencil, X, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -31,41 +31,59 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
       animate={isWiggleMode ? { rotate: [-1.5, 1.5, -1.5], transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" } } : { rotate: 0 }}
     >
       <div className="absolute top-1 left-1 z-10">
+        <AnimatePresence>
         {isWiggleMode && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-5 w-5 rounded-full bg-background/50 backdrop-blur-sm text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
-            onClick={(e) => handleButtonClick(e, () => onToggleFavorite(app.id))}
-            aria-label={`Favorite ${app.name}`}
-          >
-            <Star className={cn("h-3 w-3", app.isFavorite ? "fill-primary text-primary" : "text-foreground/60")} />
-          </Button>
-        )}
-      </div>
-
-      {app.isCustom && isWiggleMode && (
-         <div className="absolute top-1 right-1 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5">
-            <Button
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
-                onClick={(e) => handleButtonClick(e, () => onEdit(app))}
-                aria-label={`Edit ${app.name}`}
-            >
-                <Pencil className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="destructive"
-              size="icon"
-              className="h-5 w-5 rounded-full shadow-lg"
-              onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
-              aria-label={`Delete ${app.name}`}
-            >
-              <X className="h-3 w-3" />
-            </Button>
-        </div>
-      )}
+                className="h-5 w-5 rounded-full bg-background/50 backdrop-blur-sm text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
+                onClick={(e) => handleButtonClick(e, () => onToggleFavorite(app.id))}
+                aria-label={`Favorite ${app.name}`}
+              >
+                <Star className={cn("h-3 w-3", app.isFavorite ? "fill-primary text-primary" : "text-foreground/60")} />
+              </Button>
+            </motion.div>
+        )}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence>
+        {app.isCustom && isWiggleMode && (
+          <motion.div 
+              className="absolute top-1 right-1 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.2 }}
+          >
+              <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
+                  onClick={(e) => handleButtonClick(e, () => onEdit(app))}
+                  aria-label={`Edit ${app.name}`}
+              >
+                  <Pencil className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-5 w-5 rounded-full shadow-lg"
+                onClick={(e) => handleButtonClick(e, () => onDelete(app.id))}
+                aria-label={`Delete ${app.name}`}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <a 
         href={app.url} 
         target="_blank" 

@@ -26,7 +26,7 @@ export function SettingsDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOp
             Customize your app experience. Changes are saved automatically.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-6 py-4">
+        <div className="grid gap-6 py-4 max-h-[60vh] overflow-y-auto pr-2">
           <div className="grid gap-4">
             <h3 className="font-medium text-sm text-muted-foreground">Appearance</h3>
             <div className="grid gap-4">

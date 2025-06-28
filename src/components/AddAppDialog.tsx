@@ -169,7 +169,7 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
               name="iconUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Icon URL</FormLabel>
+                  <FormLabel>Icon URL (Optional)</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., https://example.com/icon.png" {...field} />
                   </FormControl>

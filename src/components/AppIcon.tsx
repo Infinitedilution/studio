@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { Pencil, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { App } from '@/lib/types';
@@ -12,9 +12,10 @@ interface AppIconProps {
   app: App;
   isWiggleMode: boolean;
   onDelete: (id: string) => void;
+  onEdit: (app: App) => void;
 }
 
-export function AppIcon({ app, isWiggleMode, onDelete }: AppIconProps) {
+export function AppIcon({ app, isWiggleMode, onEdit, onDelete }: AppIconProps) {
   return (
     <motion.div
       layout
@@ -24,15 +25,26 @@ export function AppIcon({ app, isWiggleMode, onDelete }: AppIconProps) {
       )}
     >
       {app.isCustom && isWiggleMode && (
-        <Button
-          variant="destructive"
-          size="icon"
-          className="absolute -top-2 -right-2 z-10 h-6 w-6 rounded-full shadow-lg"
-          onClick={() => onDelete(app.id)}
-          aria-label={`Delete ${app.name}`}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+         <div className="absolute -top-2 -right-2 z-10 flex items-center bg-background/50 backdrop-blur-sm rounded-full p-0.5 gap-0.5">
+            <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 rounded-full text-foreground/80 hover:bg-primary/90 hover:text-primary-foreground"
+                onClick={() => onEdit(app)}
+                aria-label={`Edit ${app.name}`}
+            >
+                <Pencil className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="destructive"
+              size="icon"
+              className="h-6 w-6 rounded-full shadow-lg"
+              onClick={() => onDelete(app.id)}
+              aria-label={`Delete ${app.name}`}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+        </div>
       )}
       <a href={app.url} target="_blank" rel="noopener noreferrer" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
         <motion.div

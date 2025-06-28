@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Grip, Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { appHints } from '@/lib/apps';
 import { useDebounce } from '@/hooks/use-debounce';
+import { EditAppDialog } from './EditAppDialog';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -20,6 +21,7 @@ export function OrbitalDock() {
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [isWiggleMode, setIsWiggleMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [editingApp, setEditingApp] = useState<App | null>(null);
 
   useEffect(() => {
     try {
@@ -42,6 +44,14 @@ export function OrbitalDock() {
     }
   }, [apps, isMounted]);
 
+  const handleToggleWiggleMode = () => {
+    const newMode = !isWiggleMode;
+    setIsWiggleMode(newMode);
+    if (!newMode) {
+        setSearchQuery('');
+    }
+  }
+
   const filteredApps = useMemo(() => {
     if (!debouncedSearchQuery) return apps;
     return apps.filter(app =>
@@ -60,6 +70,11 @@ export function OrbitalDock() {
     setApps(prev => [...prev, appToAdd]);
   }, []);
 
+  const updateApp = useCallback((updatedApp: App) => {
+    setApps(prev => prev.map(app => app.id === updatedApp.id ? updatedApp : app));
+    setEditingApp(null);
+  }, []);
+
   const deleteApp = useCallback((id: string) => {
     setApps(prev => prev.filter(app => app.id !== id));
   }, []);
@@ -72,67 +87,86 @@ export function OrbitalDock() {
     );
   }
 
+  const displayedApps = isWiggleMode ? apps : filteredApps;
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
-      <header className="fixed top-0 left-0 right-0 z-20 flex justify-center p-4 bg-transparent">
-        <div className="w-full max-w-md">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search apps..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-2 h-11 rounded-full bg-background/50 backdrop-blur-sm border-border/50 shadow-sm focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-            />
-          </div>
-        </div>
-      </header>
+      <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
+        <div className="max-w-7xl mx-auto">
+            <header className="flex flex-col items-center justify-center text-center mb-10">
+                <h1 className="text-5xl font-headline font-bold text-foreground mb-6">Apps</h1>
+                <div className="w-full max-w-lg">
+                <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                    <Input
+                    type="search"
+                    placeholder="Search apps..."
+                    value={searchQuery}
+                    disabled={isWiggleMode}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-14 pr-4 py-3 h-14 rounded-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                </div>
+                </div>
+            </header>
 
-      <main className="flex-grow pt-24 pb-32 px-4 sm:px-8 md:px-12">
-        <div className="flex items-center justify-between mb-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-headline font-bold text-foreground">Apps</h1>
-            <div className="flex items-center gap-2">
-                <AddAppDialog onAddApp={addApp} />
-                 <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setIsWiggleMode(!isWiggleMode)}
-                    className={cn("rounded-full transition-colors", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
-                    aria-pressed={isWiggleMode}
-                >
-                    <Grip className="h-5 w-5" />
-                    <span className="sr-only">Toggle wiggle mode</span>
-                </Button>
+            <div className="flex items-center justify-end mb-8 -mt-8">
+                <div className="flex items-center gap-2">
+                    <AddAppDialog onAddApp={addApp} />
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleToggleWiggleMode}
+                        className={cn("rounded-full transition-colors", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                        aria-pressed={isWiggleMode}
+                    >
+                        <Grip className="h-5 w-5" />
+                        <span className="sr-only">Toggle edit mode</span>
+                    </Button>
+                </div>
             </div>
-        </div>
-        
-        <motion.div
-          layout
-          className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8 max-w-7xl mx-auto"
-        >
-          <AnimatePresence>
-            {filteredApps.map((app) => (
-              <motion.div
-                key={app.id}
-                layout
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              >
-                <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+            
+            <Reorder.Group
+              as="div"
+              axis="xy"
+              values={apps}
+              onReorder={setApps}
+              className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
+            >
+              <AnimatePresence>
+                {displayedApps.map((app) => (
+                  <Reorder.Item
+                    key={app.id}
+                    value={app}
+                    drag={isWiggleMode}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    className="relative z-0"
+                  >
+                    <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} />
+                  </Reorder.Item>
+                ))}
+              </AnimatePresence>
+            </Reorder.Group>
 
-        {filteredApps.length === 0 && (
-            <div className="text-center py-16 text-muted-foreground">
-                <p className="text-lg">No apps found for "{debouncedSearchQuery}"</p>
-            </div>
-        )}
+            {!isWiggleMode && filteredApps.length === 0 && (
+                <div className="text-center py-16 text-muted-foreground">
+                    <p className="text-lg">No apps found for "{debouncedSearchQuery}"</p>
+                </div>
+            )}
+        </div>
       </main>
+
+      {editingApp && (
+        <EditAppDialog
+            app={editingApp}
+            isOpen={!!editingApp}
+            onOpenChange={(open) => !open && setEditingApp(null)}
+            onUpdateApp={updateApp}
+        />
+      )}
 
       <footer className="fixed bottom-0 left-0 right-0 flex justify-center p-4 z-20 pointer-events-none">
         <motion.div 
@@ -156,8 +190,8 @@ export function OrbitalDock() {
                         <Image
                             src={app.iconUrl}
                             alt={`${app.name} icon`}
-                            width={56}
-                            height={56}
+                            width={72}
+                            height={72}
                             data-ai-hint={appHints[app.name]}
                             className="rounded-lg bg-card"
                         />

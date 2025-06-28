@@ -19,9 +19,9 @@ export async function getFaviconAction(url: string) {
     try {
         const urlObj = new URL(url);
         const domain = urlObj.hostname;
-        return { iconUrl: `https://www.google.com/s2/favicons?domain=${domain}&sz=128` };
+        return { iconUrl: `https://icon.horse/icon/${domain}/256` };
     } catch (error) {
         console.error("Invalid URL for favicon:", error);
-        return { iconUrl: 'https://placehold.co/128x128.png' };
+        return { iconUrl: 'https://placehold.co/256x256.png' };
     }
 }

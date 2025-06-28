@@ -30,6 +30,7 @@ const prompt = ai.definePrompt({
   input: {schema: SuggestAppCategoryInputSchema},
   output: {schema: SuggestAppCategoryOutputSchema},
   prompt: `You are an expert app categorizer. Given the URL of an app, you will determine the most appropriate category for the app.
+Suggest one of the following categories if appropriate: Productivity, Design, Social, Utilities, Entertainment, Development, Dex, Cex, Web3 Games, Memes. Otherwise, suggest a suitable custom category.
 
 URL: {{{url}}}
 

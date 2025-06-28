@@ -150,7 +150,6 @@ export function OrbitalDock() {
                   <Reorder.Item
                     key={app.id}
                     value={app}
-                    layoutId={app.id}
                     drag={isWiggleMode}
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -171,7 +170,6 @@ export function OrbitalDock() {
                   {filteredApps.map((app) => (
                     <motion.div
                       key={app.id}
-                      layoutId={app.id}
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.5 }}

@@ -79,15 +79,12 @@ export function OrbitalDock() {
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
   const filteredApps = useMemo(() => {
-    if (isWiggleMode) {
-      return apps;
-    }
     return apps.filter(app => {
       const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
       const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [apps, debouncedSearchQuery, selectedCategory, isWiggleMode]);
+  }, [apps, debouncedSearchQuery, selectedCategory]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -119,6 +116,7 @@ export function OrbitalDock() {
 
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
   const glassStyle = "border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
+  const lightBorderStyle = "border-slate-400";
 
   return (
     <div className="flex flex-col min-h-screen text-foreground transition-colors duration-300">
@@ -129,7 +127,7 @@ export function OrbitalDock() {
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button size="icon" className={`h-12 w-12 flex-shrink-0 rounded-full ${glassStyle}`} disabled={isWiggleMode}>
+                            <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, lightBorderStyle)} disabled={isWiggleMode}>
                                 <Filter className="h-5 w-5" />
                                 <span className="sr-only">Filter by category</span>
                             </Button>
@@ -149,11 +147,11 @@ export function OrbitalDock() {
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input
                         type="search"
-                        placeholder={isWiggleMode ? "Exit edit mode to search" : "Search DApps..."}
+                        placeholder="Search DApps..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         disabled={isWiggleMode}
-                        className={`w-full pl-12 pr-4 py-3 h-12 rounded-full text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${glassStyle}`}
+                        className={cn(`w-full pl-12 pr-4 py-3 h-10 rounded-full text-base focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background`, glassStyle, lightBorderStyle)}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -161,18 +159,18 @@ export function OrbitalDock() {
                         <Button
                             size="icon"
                             onClick={handleToggleWiggleMode}
-                            className={cn(`rounded-full transition-colors h-12 w-12 ${glassStyle}`, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, lightBorderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
                             aria-pressed={isWiggleMode}
                             title="Toggle edit mode"
                         >
                             <Grip className="h-5 w-5" />
                             <span className="sr-only">Toggle edit mode</span>
                         </Button>
-                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={`rounded-full h-12 w-12 ${glassStyle}`}>
+                        <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, lightBorderStyle)}>
                             <SettingsIcon className="h-5 w-5" />
                              <span className="sr-only">Open Settings</span>
                         </Button>
-                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`rounded-full h-12 w-12 ${glassStyle}`}>
+                        <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, lightBorderStyle)}>
                             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                             <span className="sr-only">Toggle theme</span>
@@ -219,7 +217,7 @@ export function OrbitalDock() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
-            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg p-2 pointer-events-auto"
+            className="bg-background/60 dark:bg-black/20 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto"
         >
             <div className="flex items-end gap-2">
                 <AnimatePresence>
@@ -240,8 +238,8 @@ export function OrbitalDock() {
                       >
                           <div
                             style={{
-                              width: settings.iconSize * 0.7,
-                              height: settings.iconSize * 0.7,
+                              width: settings.iconSize * 0.8,
+                              height: settings.iconSize * 0.8,
                             }}
                             className="relative"
                           >
@@ -249,7 +247,7 @@ export function OrbitalDock() {
                                 src={app.iconUrl}
                                 alt={`${app.name} icon`}
                                 fill
-                                sizes={`${settings.iconSize * 0.7}px`}
+                                sizes={`${settings.iconSize * 0.8}px`}
                                 data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
                                 className="rounded-lg bg-card object-cover"
                             />
@@ -261,7 +259,7 @@ export function OrbitalDock() {
                   ))}
                 </AnimatePresence>
                 {favoriteApps.length === 0 && (
-                  <div className="h-[56px] flex items-center justify-center px-4 text-sm text-muted-foreground">
+                  <div className="h-[64px] flex items-center justify-center px-4 text-sm text-muted-foreground">
                     Favorite apps to add them to the dock
                   </div>
                 )}

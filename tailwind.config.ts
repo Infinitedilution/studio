@@ -92,11 +92,16 @@ export default {
           '0%, 100%': { transform: 'rotate(-1.5deg)' },
           '50%': { transform: 'rotate(1.5deg)' },
         },
+        'animated-gradient': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'wiggle': 'wiggle 0.4s ease-in-out infinite',
+        'animated-gradient': 'animated-gradient 15s ease infinite',
       },
     },
   },

@@ -16,7 +16,7 @@
     --secondary-foreground: 240 10% 3.9%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 212 87% 60%;
+    --accent: 272 76% 53%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -43,7 +43,7 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 231 39% 25%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 212 87% 60%;
+    --accent: 272 76% 53%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -64,8 +64,12 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-  .dark body {
-    background-image: linear-gradient(to bottom right, #00000033, #FFFFFF1A);
+    --gradient-start: hsl(var(--primary));
+    --gradient-mid: hsl(var(--accent));
+    --gradient-end: hsl(var(--secondary));
+    
+    background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end), var(--gradient-mid));
+    background-size: 400% 400%;
+    @apply animate-animated-gradient;
   }
 }

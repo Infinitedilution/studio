@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -235,16 +234,31 @@ export function OrbitalDock() {
           <SheetTitle>Controls</SheetTitle>
         </SheetHeader>
         <div className="grid gap-4 py-4">
-          <div className="relative flex-grow">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search DApps..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              disabled={isWiggleMode}
-              className={cn(`w-full pl-11 pr-4 h-12 rounded-full text-base focus:ring-2 focus:ring-primary`, glassStyle, borderStyle)}
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative flex-grow">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search DApps..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                disabled={isWiggleMode}
+                className={cn(`w-full pl-11 pr-4 h-12 rounded-full text-base focus:ring-2 focus:ring-primary`, glassStyle, borderStyle)}
+              />
+            </div>
+            <Button
+              size="icon"
+              className={cn(`font-semibold h-12 w-12 rounded-full flex-shrink-0`, glassStyle)}
+              onClick={() => {
+                setAddAppInitialValue(undefined);
+                setIsAddAppDialogOpen(true);
+                setIsMobileSheetOpen(false);
+              }}
+              aria-label="Add App"
+            >
+              <Plus className="h-5 w-5" />
+              <span className="sr-only">Add App</span>
+            </Button>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -263,16 +277,6 @@ export function OrbitalDock() {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            className={cn(`font-semibold h-12 px-5 rounded-full`, glassStyle)}
-            onClick={() => {
-              setAddAppInitialValue(undefined);
-              setIsAddAppDialogOpen(true);
-              setIsMobileSheetOpen(false);
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add App
-          </Button>
           <div className="grid grid-cols-3 gap-2">
             <Button
               size="icon"
@@ -440,5 +444,3 @@ export function OrbitalDock() {
     </div>
   );
 }
-
-    

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,15 +12,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Plus, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import type { App } from '@/lib/types';
 import { suggestCategoryAction, getFaviconAction } from '@/actions/suggestCategoryAction';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -28,8 +26,14 @@ const formSchema = z.object({
   category: z.string().min(2, { message: 'Category is required.' }),
 });
 
-export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'isCustom'>) => void }) {
-  const [isOpen, setIsOpen] = useState(false);
+interface AddAppDialogProps {
+  onAddApp: (app: Omit<App, 'id' | 'isCustom'>) => void;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  initialValue?: string;
+}
+
+export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: AddAppDialogProps) {
   const [isSuggesting, setIsSuggesting] = useState(false);
   const { toast } = useToast();
 
@@ -38,7 +42,7 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
     defaultValues: { name: '', url: '', category: '' },
   });
 
-  const handleUrlBlur = async () => {
+  const handleUrlBlur = useCallback(async () => {
     let url = form.getValues('url').trim();
     if (!url) return;
 
@@ -80,25 +84,41 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
         setIsSuggesting(false);
       }
     }
-  };
+  }, [form, toast]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      form.reset({ name: '', url: '', category: '' });
+      return;
+    }
+
+    if (initialValue) {
+      const isUrlLike = initialValue.includes('.') && !initialValue.includes(' ');
+      
+      if (isUrlLike) {
+        let url = initialValue;
+        if (!/^https?:\/\//i.test(url)) {
+          url = 'https://' + url;
+        }
+        form.setValue('url', url, { shouldValidate: true });
+        handleUrlBlur();
+      } else {
+        form.setValue('name', initialValue, { shouldValidate: true });
+      }
+    }
+  }, [isOpen, initialValue, form, handleUrlBlur]);
+
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { iconUrl } = await getFaviconAction(values.url);
     onAddApp({ ...values, iconUrl, isFavorite: false });
     form.reset();
-    setIsOpen(false);
+    onOpenChange(false);
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });
   };
 
-  const glassStyle = "text-foreground border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
-
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className={cn(`font-semibold h-12 px-5 rounded-full`, glassStyle)}>
-          <Plus className="mr-2 h-4 w-4" /> Add App
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="font-headline">Add a new app</DialogTitle>

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -40,6 +40,8 @@ export function OrbitalDock() {
   const { settings } = useSettings();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const { theme, setTheme } = useTheme();
+  const [isAddAppDialogOpen, setIsAddAppDialogOpen] = useState(false);
+  const [addAppInitialValue, setAddAppInitialValue] = useState<string | undefined>();
 
 
   useEffect(() => {
@@ -165,7 +167,15 @@ export function OrbitalDock() {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <AddAppDialog onAddApp={addApp} />
+                        <Button
+                            className={cn(`font-semibold h-12 px-5 rounded-full`, glassStyle)}
+                            onClick={() => {
+                                setAddAppInitialValue(undefined);
+                                setIsAddAppDialogOpen(true);
+                            }}
+                        >
+                            <Plus className="mr-2 h-4 w-4" /> Add App
+                        </Button>
                         <Button
                             size="icon"
                             onClick={handleToggleWiggleMode}
@@ -213,8 +223,26 @@ export function OrbitalDock() {
 
             {filteredApps.length === 0 && !isWiggleMode && (
                 <div className="text-center py-16 text-muted-foreground">
-                    <p className="text-lg">No apps found</p>
-                    <p className="text-sm">Try a different search or filter.</p>
+                    {debouncedSearchQuery ? (
+                        <>
+                            <p className="text-lg">No app found for &quot;{debouncedSearchQuery}&quot;</p>
+                            <Button
+                                variant="link"
+                                className="text-lg text-primary"
+                                onClick={() => {
+                                    setAddAppInitialValue(debouncedSearchQuery);
+                                    setIsAddAppDialogOpen(true);
+                                }}
+                            >
+                                Add it as a new app?
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <p className="text-lg">No apps found</p>
+                            <p className="text-sm">Try a different search or filter.</p>
+                        </>
+                    )}
                 </div>
             )}
         </div>
@@ -222,6 +250,13 @@ export function OrbitalDock() {
 
       <SettingsDialog isOpen={isSettingsOpen} onOpenChange={setIsSettingsOpen} />
       {editingApp && <EditAppDialog app={editingApp} isOpen={!!editingApp} onOpenChange={(open) => !open && setEditingApp(null)} onUpdateApp={updateApp} />}
+      <AddAppDialog 
+        onAddApp={addApp}
+        isOpen={isAddAppDialogOpen}
+        onOpenChange={setIsAddAppDialogOpen}
+        initialValue={addAppInitialValue}
+      />
+
 
       <footer className="fixed bottom-0 left-0 right-0 flex justify-center p-4 z-20 pointer-events-none">
         <motion.div 

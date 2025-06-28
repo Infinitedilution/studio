@@ -154,6 +154,7 @@ export function OrbitalDock() {
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
   const glassStyle = "text-foreground bg-background/80 backdrop-blur-sm border-border hover:bg-background/90";
   const borderStyle = "border-slate-400 dark:border-white/20 dark:hover:bg-white/20";
+  const mobileSheetGlassStyle = "bg-white/5 hover:bg-white/10 border border-white/10 text-foreground placeholder:text-foreground/80";
 
   const desktopControls = (
     <div className="w-full max-w-4xl flex items-center gap-2">
@@ -229,7 +230,7 @@ export function OrbitalDock() {
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-transparent bg-main-gradient">
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-background/80 backdrop-blur-xl border-t border-border/20">
         <SheetHeader>
           <SheetTitle>Controls</SheetTitle>
         </SheetHeader>
@@ -243,12 +244,12 @@ export function OrbitalDock() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 disabled={isWiggleMode}
-                className={cn(`w-full pl-11 pr-4 h-12 rounded-full text-base focus:ring-2 focus:ring-primary`, glassStyle, borderStyle)}
+                className={cn(`w-full pl-11 pr-4 h-12 rounded-full text-base focus:ring-2 focus:ring-primary`, mobileSheetGlassStyle)}
               />
             </div>
             <Button
               size="icon"
-              className={cn(`font-semibold h-12 w-12 rounded-full flex-shrink-0`, glassStyle, borderStyle)}
+              className={cn(`font-semibold h-12 w-12 rounded-full flex-shrink-0`, mobileSheetGlassStyle)}
               onClick={() => {
                 setAddAppInitialValue(undefined);
                 setIsAddAppDialogOpen(true);
@@ -262,7 +263,7 @@ export function OrbitalDock() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className={cn(`w-full justify-between font-semibold h-12 px-5 rounded-full`, glassStyle, borderStyle)} disabled={isWiggleMode}>
+              <Button className={cn(`w-full justify-between font-semibold h-12 px-5 rounded-full`, mobileSheetGlassStyle)} disabled={isWiggleMode}>
                 <span>Filter: {selectedCategory}</span>
                 <Filter className="h-5 w-5" />
               </Button>
@@ -281,16 +282,16 @@ export function OrbitalDock() {
             <Button
               size="icon"
               onClick={handleToggleWiggleMode}
-              className={cn(`rounded-full transition-colors h-12 w-full`, glassStyle, borderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+              className={cn(`rounded-full transition-colors h-12 w-full`, mobileSheetGlassStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
               aria-pressed={isWiggleMode}
               title="Toggle edit mode"
             >
               <Grip className="h-5 w-5" />
             </Button>
-            <Button size="icon" onClick={() => { setIsSettingsOpen(true); setIsMobileSheetOpen(false); }} className={cn(`rounded-full h-12 w-full`, glassStyle, borderStyle)}>
+            <Button size="icon" onClick={() => { setIsSettingsOpen(true); setIsMobileSheetOpen(false); }} className={cn(`rounded-full h-12 w-full`, mobileSheetGlassStyle)}>
               <SettingsIcon className="h-5 w-5" />
             </Button>
-            <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-12 w-full`, glassStyle, borderStyle)}>
+            <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-12 w-full`, mobileSheetGlassStyle)}>
               <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>

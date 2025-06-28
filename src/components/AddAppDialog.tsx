@@ -69,7 +69,7 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { iconUrl } = await getFaviconAction(values.url);
-    onAddApp({ ...values, iconUrl });
+    onAddApp({ ...values, iconUrl, isFavorite: false });
     form.reset();
     setIsOpen(false);
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });

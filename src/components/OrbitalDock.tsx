@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
-import { Grip, Search, Loader2 } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { defaultApps } from '@/lib/apps';
 import type { App } from '@/lib/types';
 import { AddAppDialog } from '@/components/AddAppDialog';
@@ -14,6 +15,8 @@ import Image from 'next/image';
 import { appHints } from '@/lib/apps';
 import { useDebounce } from '@/hooks/use-debounce';
 import { EditAppDialog } from './EditAppDialog';
+import { SettingsDialog } from './SettingsDialog';
+import { useSettings } from '@/hooks/use-settings';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -22,6 +25,9 @@ export function OrbitalDock() {
   const [isWiggleMode, setIsWiggleMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [editingApp, setEditingApp] = useState<App | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { settings } = useSettings();
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     try {
@@ -29,13 +35,9 @@ export function OrbitalDock() {
       if (storedApps) {
         const parsedApps = JSON.parse(storedApps);
         if (Array.isArray(parsedApps)) {
-          // Filter out any invalid or malformed app objects from localStorage
           const validApps = parsedApps.filter(app => 
-            app &&
-            typeof app.id === 'string' &&
-            typeof app.name === 'string' &&
-            typeof app.url === 'string' &&
-            typeof app.iconUrl === 'string' &&
+            app && typeof app.id === 'string' && typeof app.name === 'string' &&
+            typeof app.url === 'string' && typeof app.iconUrl === 'string' &&
             typeof app.category === 'string'
           );
           setApps(validApps);
@@ -59,28 +61,23 @@ export function OrbitalDock() {
   }, [apps, isMounted]);
 
   const handleToggleWiggleMode = () => {
-    const newMode = !isWiggleMode;
-    setIsWiggleMode(newMode);
-    if (!newMode) {
-        setSearchQuery('');
-    }
+    setIsWiggleMode(prev => !prev);
   }
+  
+  const categories = useMemo(() => ['All', ...new Set(apps.map(app => app.category))], [apps]);
 
   const filteredApps = useMemo(() => {
-    if (!debouncedSearchQuery) return apps;
-    return apps.filter(app =>
-      app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
-    );
-  }, [apps, debouncedSearchQuery]);
+    return apps.filter(app => {
+      const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
+      const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [apps, debouncedSearchQuery, selectedCategory]);
 
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
   const addApp = useCallback((newApp: Omit<App, 'id' | 'isCustom'>) => {
-    const appToAdd: App = {
-      ...newApp,
-      id: crypto.randomUUID(),
-      isCustom: true,
-    };
+    const appToAdd: App = { ...newApp, id: crypto.randomUUID(), isCustom: true };
     setApps(prev => [...prev, appToAdd]);
   }, []);
 
@@ -93,6 +90,10 @@ export function OrbitalDock() {
     setApps(prev => prev.filter(app => app.id !== id));
   }, []);
 
+  const toggleFavorite = useCallback((id: string) => {
+    setApps(prev => prev.map(app => app.id === id ? { ...app, isFavorite: !app.isFavorite } : app));
+  }, []);
+
   if (!isMounted) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -101,104 +102,82 @@ export function OrbitalDock() {
     );
   }
 
+  const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
       <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
-            <header className="flex flex-col items-center justify-center text-center mb-10">
-                <h1 className="text-5xl font-headline font-bold text-foreground mb-6">Apps</h1>
-                <div className="w-full max-w-lg">
-                <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
-                    <Input
-                    type="search"
-                    placeholder="Search apps..."
-                    value={searchQuery}
-                    disabled={isWiggleMode}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-14 pr-4 py-3 h-14 rounded-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
-                    />
+            <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
+                <h1 className="text-5xl font-headline font-bold text-foreground">Sonic Dapps</h1>
+                <div className="w-full max-w-2xl flex items-center gap-4">
+                    <div className="relative flex-grow">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                        <Input
+                        type="search"
+                        placeholder="Search apps..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-14 pr-4 py-3 h-14 rounded-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <AddAppDialog onAddApp={addApp} />
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handleToggleWiggleMode}
+                            className={cn("rounded-full transition-colors h-14 w-14", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            aria-pressed={isWiggleMode}
+                        >
+                            <Grip className="h-6 w-6" />
+                            <span className="sr-only">Toggle edit mode</span>
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} className="rounded-full h-14 w-14">
+                            <SettingsIcon className="h-6 w-6" />
+                             <span className="sr-only">Open Settings</span>
+                        </Button>
+                    </div>
                 </div>
-                </div>
+                 <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full max-w-2xl">
+                    <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 md:grid-cols-6">
+                        {categories.map(category => (
+                            <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
+                        ))}
+                    </TabsList>
+                </Tabs>
             </header>
-
-            <div className="flex items-center justify-end mb-8 -mt-8">
-                <div className="flex items-center gap-2">
-                    <AddAppDialog onAddApp={addApp} />
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleToggleWiggleMode}
-                        className={cn("rounded-full transition-colors", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
-                        aria-pressed={isWiggleMode}
-                    >
-                        <Grip className="h-5 w-5" />
-                        <span className="sr-only">Toggle edit mode</span>
-                    </Button>
-                </div>
-            </div>
             
             {isWiggleMode ? (
-              <Reorder.Group
-                as="div"
-                axis="xy"
-                values={apps}
-                onReorder={setApps}
-                className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
-              >
+              <Reorder.Group as="div" axis="xy" values={apps} onReorder={setApps} className={cn("grid gap-x-4 gap-y-8", gridCols)}>
                 {apps.map((app) => (
-                  <Reorder.Item
-                    key={app.id}
-                    value={app}
-                    drag={isWiggleMode}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    className="relative z-0"
-                  >
-                    <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} />
+                  <Reorder.Item key={app.id} value={app} className="relative z-0">
+                    <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
                   </Reorder.Item>
                 ))}
               </Reorder.Group>
             ) : (
-              <motion.div
-                className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-x-4 gap-y-8"
-              >
+              <motion.div layout className={cn("grid gap-x-4 gap-y-8", gridCols)}>
                 <AnimatePresence>
                   {filteredApps.map((app) => (
-                    <motion.div
-                      key={app.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.5 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                      className="relative z-0"
-                    >
-                      <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} />
+                    <motion.div key={app.id} layout initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
+                      <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
                     </motion.div>
                   ))}
                 </AnimatePresence>
               </motion.div>
             )}
 
-            {!isWiggleMode && filteredApps.length === 0 && debouncedSearchQuery && (
+            {!isWiggleMode && filteredApps.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground">
-                    <p className="text-lg">No apps found for "{debouncedSearchQuery}"</p>
+                    <p className="text-lg">No apps found for "{debouncedSearchQuery || selectedCategory}"</p>
                 </div>
             )}
         </div>
       </main>
 
-      {editingApp && (
-        <EditAppDialog
-            app={editingApp}
-            isOpen={!!editingApp}
-            onOpenChange={(open) => !open && setEditingApp(null)}
-            onUpdateApp={updateApp}
-        />
-      )}
+      <SettingsDialog isOpen={isSettingsOpen} onOpenChange={setIsSettingsOpen} />
+      {editingApp && <EditAppDialog app={editingApp} isOpen={!!editingApp} onOpenChange={(open) => !open && setEditingApp(null)} onUpdateApp={updateApp} />}
 
       <footer className="fixed bottom-0 left-0 right-0 flex justify-center p-4 z-20 pointer-events-none">
         <motion.div 
@@ -207,7 +186,7 @@ export function OrbitalDock() {
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
             className="bg-background/30 backdrop-blur-lg border border-border/20 rounded-2xl shadow-lg p-2 pointer-events-auto"
         >
-            <div className="flex items-center gap-2">
+            <div className="flex items-end gap-2">
                 {favoriteApps.map((app) => (
                     <motion.a 
                         href={app.url} 
@@ -222,10 +201,10 @@ export function OrbitalDock() {
                         <Image
                             src={app.iconUrl}
                             alt={`${app.name} icon`}
-                            width={72}
-                            height={72}
+                            width={96}
+                            height={96}
                             data-ai-hint={appHints[app.name]}
-                            className="rounded-lg bg-card"
+                            className="rounded-lg bg-card object-cover"
                         />
                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                             {app.name}

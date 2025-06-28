@@ -64,7 +64,24 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .bg-dots {
     background-image: radial-gradient(circle at 1px 1px, hsl(var(--foreground) / 0.1) 1px, transparent 0);
     background-size: 2rem 2rem;
+  }
+
+  .bg-blueprint {
+    background-color: hsl(var(--background));
+    background-image:
+        linear-gradient(hsla(var(--foreground) / 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, hsla(var(--foreground) / 0.07) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+  }
+
+  .bg-mesh {
+      background-color: hsl(var(--background));
+      background-image: radial-gradient(circle at center, hsla(var(--foreground) / 0.1) 0, hsla(var(--foreground) / 0) 50%);
+      background-size: 100px 100px;
   }
 }

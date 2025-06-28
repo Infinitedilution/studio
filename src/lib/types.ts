@@ -5,5 +5,10 @@ export interface App {
   iconUrl: string;
   category: string;
   isCustom: boolean;
-  isFavorite?: boolean;
+  isFavorite: boolean;
+}
+
+export interface Settings {
+  iconSize: number;
+  background: string;
 }

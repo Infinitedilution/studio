@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   url: z.string().url({ message: 'Please enter a valid URL.' }).refine(val => val.startsWith('https://'), { message: 'URL must be secure (https).' }),
+  iconUrl: z.string().url({ message: 'Please enter a valid image URL.' }),
   category: z.string().min(2, { message: 'Category is required.' }),
 });
 
@@ -39,6 +40,7 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
     defaultValues: {
         name: app.name,
         url: app.url,
+        iconUrl: app.iconUrl,
         category: app.category,
     },
   });
@@ -47,6 +49,7 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
     form.reset({
         name: app.name,
         url: app.url,
+        iconUrl: app.iconUrl,
         category: app.category,
     })
   }, [app, form]);
@@ -90,6 +93,19 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
                   <FormLabel>App Name</FormLabel>
                   <FormControl>
                     <Input placeholder="My Awesome App" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="iconUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Icon URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://example.com/icon.png" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

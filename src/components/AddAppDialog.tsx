@@ -75,10 +75,12 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });
   };
 
+  const glassStyle = "bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_#FFFFFF0D] border border-white/20 hover:bg-white/20";
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full font-semibold h-14 px-6">
+        <Button className={`font-semibold h-14 px-6 rounded-xl ${glassStyle}`}>
           <Plus className="mr-2 h-5 w-5" /> Add App
         </Button>
       </DialogTrigger>

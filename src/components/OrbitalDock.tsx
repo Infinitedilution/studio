@@ -113,6 +113,7 @@ export function OrbitalDock() {
   }
 
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
+  const glassStyle = "bg-white/10 backdrop-blur-md shadow-[inset_0_1px_1px_#FFFFFF0D] border border-white/20 hover:bg-white/20";
 
   return (
     <div className="flex flex-col min-h-screen text-foreground transition-colors duration-300">
@@ -123,7 +124,7 @@ export function OrbitalDock() {
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon" className="h-14 w-14 flex-shrink-0 rounded-full" disabled={isWiggleMode}>
+                            <Button variant="outline" size="icon" className={`h-14 w-14 flex-shrink-0 rounded-xl ${glassStyle}`} disabled={isWiggleMode}>
                                 <Filter className="h-6 w-6" />
                                 <span className="sr-only">Filter by category</span>
                             </Button>
@@ -147,7 +148,7 @@ export function OrbitalDock() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         disabled={isWiggleMode}
-                        className="w-full pl-14 pr-4 py-3 h-14 rounded-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+                        className={`w-full pl-14 pr-4 py-3 h-14 rounded-xl text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${glassStyle}`}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -156,14 +157,14 @@ export function OrbitalDock() {
                             variant="outline"
                             size="icon"
                             onClick={handleToggleWiggleMode}
-                            className={cn("rounded-full transition-colors h-14 w-14", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            className={cn(`rounded-xl transition-colors h-14 w-14 ${glassStyle}`, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
                             aria-pressed={isWiggleMode}
                             title="Toggle edit mode"
                         >
                             <Grip className="h-6 w-6" />
                             <span className="sr-only">Toggle edit mode</span>
                         </Button>
-                        <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} className="rounded-full h-14 w-14">
+                        <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} className={`rounded-xl h-14 w-14 ${glassStyle}`}>
                             <SettingsIcon className="h-6 w-6" />
                              <span className="sr-only">Open Settings</span>
                         </Button>
@@ -182,7 +183,6 @@ export function OrbitalDock() {
                   layout
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   className="relative z-0"
                 >
@@ -209,7 +209,7 @@ export function OrbitalDock() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
-            className="bg-background/30 backdrop-blur-lg border border-border/20 rounded-2xl shadow-lg p-2 pointer-events-auto"
+            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg p-2 pointer-events-auto"
         >
             <div className="flex items-end gap-2">
                 <AnimatePresence>

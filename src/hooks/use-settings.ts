@@ -7,13 +7,6 @@ const SETTINGS_KEY = 'orbital-dock-settings';
 
 const defaultSettings: Settings = {
   iconSize: 80,
-  background: 'dots',
-  gradientFrom: '222 84% 5%', // Default dark theme background
-  gradientTo: '240 4% 12%',   // Default dark theme card background
-  gradientType: 'linear',
-  patternColor: '212 87% 60%', // Default accent
-  patternOpacity: 0.1,
-  patternGlow: false,
 };
 
 interface SettingsContextType {
@@ -52,31 +45,6 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      
-      const body = document.body;
-      // Clear all dynamic background/pattern classes and styles
-      body.className = body.className.split(' ').filter(c => !c.startsWith('bg-') && c !== 'glow').join(' ');
-      body.style.backgroundImage = '';
-      body.style.backgroundColor = `hsl(var(--background))`;
-
-      // Set pattern variables for dots/blueprint to use
-      body.style.setProperty('--pattern-color', settings.patternColor);
-      body.style.setProperty('--pattern-opacity', String(settings.patternOpacity));
-
-      if (settings.background === 'gradient') {
-          const fromColor = `hsl(${settings.gradientFrom})`;
-          const toColor = `hsl(${settings.gradientTo})`;
-          if (settings.gradientType === 'radial') {
-            body.style.backgroundImage = `radial-gradient(circle, ${fromColor}, ${toColor})`;
-          } else {
-            body.style.backgroundImage = `linear-gradient(to bottom right, ${fromColor}, ${toColor})`;
-          }
-      } else if (['dots', 'blueprint', 'mesh'].includes(settings.background)) {
-          body.classList.add(`bg-${settings.background}`);
-          if (settings.patternGlow && (settings.background === 'dots' || settings.background === 'blueprint')) {
-              body.classList.add('glow');
-          }
-      }
     }
   }, [settings, isMounted]);
 

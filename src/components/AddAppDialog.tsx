@@ -20,6 +20,7 @@ import { Plus, Loader2 } from 'lucide-react';
 import type { App } from '@/lib/types';
 import { suggestCategoryAction, getFaviconAction } from '@/actions/suggestCategoryAction';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -89,12 +90,12 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });
   };
 
-  const glassStyle = "border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
+  const glassStyle = "text-foreground border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className={`font-semibold h-12 px-5 rounded-full ${glassStyle}`}>
+        <Button className={cn(`font-semibold h-12 px-5 rounded-full`, glassStyle)}>
           <Plus className="mr-2 h-4 w-4" /> Add App
         </Button>
       </DialogTrigger>

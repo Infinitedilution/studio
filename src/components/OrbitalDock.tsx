@@ -115,11 +115,11 @@ export function OrbitalDock() {
   }
 
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
-  const glassStyle = "border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
+  const glassStyle = "text-foreground border bg-background/80 backdrop-blur-sm border-slate-300 hover:border-slate-400 dark:bg-white/10 dark:shadow-[inset_0_1px_1px_#FFFFFF0D] dark:border-white/20 dark:hover:bg-white/20";
   const lightBorderStyle = "border-slate-400";
 
   return (
-    <div className="flex flex-col min-h-screen text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen transition-colors duration-300">
       <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
@@ -217,9 +217,9 @@ export function OrbitalDock() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
-            className="bg-background/60 dark:bg-black/20 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto"
+            className="bg-background/80 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto"
         >
-            <div className="flex items-end gap-2">
+            <div className="flex items-end gap-3 p-1">
                 <AnimatePresence>
                   {favoriteApps.map((app) => (
                       <motion.a 
@@ -238,8 +238,8 @@ export function OrbitalDock() {
                       >
                           <div
                             style={{
-                              width: settings.iconSize * 0.8,
-                              height: settings.iconSize * 0.8,
+                              width: settings.iconSize * 0.9,
+                              height: settings.iconSize * 0.9,
                             }}
                             className="relative"
                           >
@@ -247,7 +247,7 @@ export function OrbitalDock() {
                                 src={app.iconUrl}
                                 alt={`${app.name} icon`}
                                 fill
-                                sizes={`${settings.iconSize * 0.8}px`}
+                                sizes={`${settings.iconSize * 0.9}px`}
                                 data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
                                 className="rounded-lg bg-card object-cover"
                             />
@@ -259,7 +259,7 @@ export function OrbitalDock() {
                   ))}
                 </AnimatePresence>
                 {favoriteApps.length === 0 && (
-                  <div className="h-[64px] flex items-center justify-center px-4 text-sm text-muted-foreground">
+                  <div className="h-[72px] flex items-center justify-center px-4 text-sm text-muted-foreground">
                     Favorite apps to add them to the dock
                   </div>
                 )}

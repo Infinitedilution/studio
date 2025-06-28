@@ -2,10 +2,18 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { defaultApps } from '@/lib/apps';
 import type { App } from '@/lib/types';
 import { AddAppDialog } from '@/components/AddAppDialog';
@@ -114,7 +122,25 @@ export function OrbitalDock() {
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
                 <h1 className="text-5xl font-headline font-bold text-foreground">Sonic Dapps</h1>
-                <div className="w-full max-w-2xl flex items-center gap-4">
+                <div className="w-full max-w-3xl flex items-center gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="icon" className="h-14 w-14 flex-shrink-0 rounded-full">
+                                <Filter className="h-6 w-6" />
+                                <span className="sr-only">Filter by category</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                            <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={selectedCategory} onValueChange={setSelectedCategory}>
+                            {categories.map(category => (
+                                <DropdownMenuRadioItem key={category} value={category}>{category}</DropdownMenuRadioItem>
+                            ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <div className="relative flex-grow">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                         <Input
@@ -144,39 +170,31 @@ export function OrbitalDock() {
                         </Button>
                     </div>
                 </div>
-                <div className="w-full max-w-sm">
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="h-12 rounded-full bg-card/80 backdrop-blur-sm border-border/50 shadow-lg text-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
-                            <SelectValue placeholder="Filter by category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {categories.map(category => (
-                                <SelectItem key={category} value={category}>{category}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
             </header>
             
-            <div
-                className={cn("grid gap-x-4 gap-y-8", gridCols)}
-            >
-                <AnimatePresence>
-                {displayedApps.map((app) => (
+            <AnimatePresence>
+                {displayedApps.length > 0 && (
                     <motion.div
-                        key={app.id}
                         layout
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                        className="relative z-0"
+                        className={cn("grid gap-x-4 gap-y-8", gridCols)}
                     >
-                        <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
+                        {displayedApps.map((app) => (
+                        <motion.div
+                            key={app.id}
+                            layout
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                            className="relative z-0"
+                        >
+                            <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
+                        </motion.div>
+                        ))}
                     </motion.div>
-                ))}
-                </AnimatePresence>
-            </div>
+                )}
+            </AnimatePresence>
+
 
             {displayedApps.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground">

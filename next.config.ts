@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'unavatar.io',
+      },
+      {
+        protocol: 'https',
         hostname: 'placehold.co',
       },
       {

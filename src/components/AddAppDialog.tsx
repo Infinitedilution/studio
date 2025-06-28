@@ -78,7 +78,7 @@ export function AddAppDialog({ onAddApp }: { onAddApp: (app: Omit<App, 'id' | 'i
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full font-semibold">
+        <Button className="rounded-full font-semibold h-14 px-6">
           <Plus className="mr-2 h-5 w-5" /> Add App
         </Button>
       </DialogTrigger>

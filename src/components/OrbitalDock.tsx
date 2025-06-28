@@ -229,7 +229,7 @@ export function OrbitalDock() {
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto">
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto bg-transparent bg-main-gradient">
         <SheetHeader>
           <SheetTitle>Controls</SheetTitle>
         </SheetHeader>
@@ -248,7 +248,7 @@ export function OrbitalDock() {
             </div>
             <Button
               size="icon"
-              className={cn(`font-semibold h-12 w-12 rounded-full flex-shrink-0`, glassStyle)}
+              className={cn(`font-semibold h-12 w-12 rounded-full flex-shrink-0`, glassStyle, borderStyle)}
               onClick={() => {
                 setAddAppInitialValue(undefined);
                 setIsAddAppDialogOpen(true);

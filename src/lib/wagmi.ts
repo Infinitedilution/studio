@@ -1,4 +1,5 @@
-import { http, createConfig, defineChain } from 'wagmi';
+import { http, createConfig } from 'wagmi';
+import { defineChain } from 'viem';
 import { injected } from 'wagmi/connectors';
 
 export const sonic = defineChain({

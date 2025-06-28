@@ -1,7 +1,6 @@
 "use client";
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Pencil, X, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -69,9 +68,15 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
             </Button>
         </div>
       )}
-      <Link href={`/app/${app.id}`} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
+      <a 
+        href={app.url} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+        onClick={(e) => { if (isWiggleMode) e.preventDefault(); }}
+      >
         <motion.div
-          whileHover={{ scale: 1.15, y: -4 }}
+          whileHover={{ scale: isWiggleMode ? 1 : 1.15, y: isWiggleMode ? 0 : -4 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           className="relative"
           style={{ width: iconSize, height: iconSize }}
@@ -86,7 +91,7 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
           />
           <div className="absolute inset-0 rounded-2xl bg-black/5 group-hover:bg-black/0 transition-colors" />
         </motion.div>
-      </Link>
+      </a>
       <p className="text-[11px] leading-tight pt-1 font-medium text-foreground/90 dark:text-foreground/80 truncate w-full">{app.name}</p>
     </motion.div>
   );

@@ -65,14 +65,21 @@ export function OrbitalDock() {
   }
   
   const categories = useMemo(() => ['All', ...new Set(apps.map(app => app.category))], [apps]);
+  
+  const filtersAreActive = debouncedSearchQuery !== '' || selectedCategory !== 'All';
 
-  const filteredApps = useMemo(() => {
-    return apps.filter(app => {
-      const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
-      const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [apps, debouncedSearchQuery, selectedCategory]);
+  const displayedApps = useMemo(() => {
+    if (filtersAreActive) {
+      return apps.filter(app => {
+        const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
+        const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+    }
+    return apps;
+  }, [apps, debouncedSearchQuery, selectedCategory, filtersAreActive]);
+  
+  const canReorder = isWiggleMode && !filtersAreActive;
 
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -127,8 +134,9 @@ export function OrbitalDock() {
                             variant="outline"
                             size="icon"
                             onClick={handleToggleWiggleMode}
-                            className={cn("rounded-full transition-colors h-14 w-14", isWiggleMode && "bg-accent text-accent-foreground border-accent")}
+                            className={cn("rounded-full transition-colors h-14 w-14", canReorder && "bg-accent text-accent-foreground border-accent")}
                             aria-pressed={isWiggleMode}
+                            title={isWiggleMode && filtersAreActive ? "Clear filters to reorder apps" : "Toggle edit mode"}
                         >
                             <Grip className="h-6 w-6" />
                             <span className="sr-only">Toggle edit mode</span>
@@ -139,6 +147,11 @@ export function OrbitalDock() {
                         </Button>
                     </div>
                 </div>
+                 {isWiggleMode && filtersAreActive && (
+                    <div className="text-center text-muted-foreground -mb-4">
+                        Clear search and category filters to reorder apps.
+                    </div>
+                 )}
                  <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full max-w-2xl">
                     <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 md:grid-cols-6">
                         {categories.map(category => (
@@ -148,27 +161,33 @@ export function OrbitalDock() {
                 </Tabs>
             </header>
             
-            {isWiggleMode ? (
-              <Reorder.Group as="div" axis="xy" values={apps} onReorder={setApps} className={cn("grid gap-x-4 gap-y-8", gridCols)}>
-                {apps.map((app) => (
-                  <Reorder.Item key={app.id} value={app} className="relative z-0">
-                    <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-            ) : (
-              <motion.div layout className={cn("grid gap-x-4 gap-y-8", gridCols)}>
+            <Reorder.Group
+                as="div"
+                axis="xy"
+                values={displayedApps}
+                onReorder={canReorder ? setApps : () => {}}
+                className={cn("grid gap-x-4 gap-y-8", gridCols)}
+            >
                 <AnimatePresence>
-                  {filteredApps.map((app) => (
-                    <motion.div key={app.id} layout initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
-                      <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
-                    </motion.div>
-                  ))}
+                {displayedApps.map((app) => (
+                    <Reorder.Item
+                        key={app.id}
+                        value={app}
+                        className="relative z-0"
+                        drag={canReorder}
+                        layout
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                    >
+                    <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
+                    </Reorder.Item>
+                ))}
                 </AnimatePresence>
-              </motion.div>
-            )}
+            </Reorder.Group>
 
-            {!isWiggleMode && filteredApps.length === 0 && (
+            {!isWiggleMode && displayedApps.length === 0 && (
                 <div className="text-center py-16 text-muted-foreground">
                     <p className="text-lg">No apps found for "{debouncedSearchQuery || selectedCategory}"</p>
                 </div>

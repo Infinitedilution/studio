@@ -126,10 +126,10 @@ export function OrbitalDock() {
 
   const dockIconSize = isMobile ? 48 : settings.dockIconSize;
 
-  const addApp = useCallback((newApp: Omit<App, 'id' | 'isCustom'>) => {
+  const addApp = (newApp: Omit<App, 'id' | 'isCustom'>) => {
     const appToAdd: App = { ...newApp, id: crypto.randomUUID(), isCustom: true };
     setApps(prev => [...prev, appToAdd]);
-  }, []);
+  };
 
   const updateApp = useCallback((updatedApp: App) => {
     setApps(prev => prev.map(app => app.id === updatedApp.id ? updatedApp : app));
@@ -223,9 +223,9 @@ export function OrbitalDock() {
   const mobileControls = (
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
-        <Button className={cn('font-semibold h-12 px-5 rounded-full', glassStyle, borderStyle)}>
-          <Menu className="mr-2 h-5 w-5" />
-          Menu & Filters
+        <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Menu & Filters</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] overflow-y-auto">
@@ -296,8 +296,8 @@ export function OrbitalDock() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
-      <header className="flex flex-col items-center justify-center text-center pt-12 mb-10 gap-6 px-4">
-        <h1 className="text-5xl sm:text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>
+      <header className="flex flex-row items-center justify-between pt-8 mb-8 px-4 md:flex-col md:justify-center md:text-center md:pt-12 md:mb-10 md:gap-6">
+        <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Dapps</h1>
         {isMobile ? mobileControls : desktopControls}
       </header>
 
@@ -438,3 +438,5 @@ export function OrbitalDock() {
     </div>
   );
 }
+
+    

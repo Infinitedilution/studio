@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -134,7 +133,7 @@ export function OrbitalDock() {
       <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
-                <h1 className="text-5xl font-headline font-bold text-foreground">Sonic Dapps</h1>
+                <h1 className="text-6xl font-headline font-medium text-foreground">Sonic Dapps</h1>
                 <div className="w-full max-w-3xl flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

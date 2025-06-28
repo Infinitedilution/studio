@@ -29,6 +29,7 @@ import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from "next-themes";
 import { Slider } from './ui/slider';
 import { Label } from './ui/label';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -44,6 +45,7 @@ export function OrbitalDock() {
   const [isAddAppDialogOpen, setIsAddAppDialogOpen] = useState(false);
   const [addAppInitialValue, setAddAppInitialValue] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     try {
@@ -113,6 +115,8 @@ export function OrbitalDock() {
   }, [filteredApps, currentPage]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
+
+  const dockIconSize = isMobile ? 48 : settings.dockIconSize;
 
   const addApp = useCallback((newApp: Omit<App, 'id' | 'isCustom'>) => {
     const appToAdd: App = { ...newApp, id: crypto.randomUUID(), isCustom: true };
@@ -293,9 +297,9 @@ export function OrbitalDock() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
-            className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto"
+            className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto max-w-full"
         >
-            <div className="flex items-end gap-3 p-1">
+            <div className="flex items-end justify-center gap-3 p-1 overflow-x-auto">
                 <AnimatePresence>
                   {favoriteApps.map((app) => (
                       <motion.a 
@@ -314,8 +318,8 @@ export function OrbitalDock() {
                       >
                           <div
                             style={{
-                              width: settings.dockIconSize,
-                              height: settings.dockIconSize,
+                              width: dockIconSize,
+                              height: dockIconSize,
                             }}
                             className="relative"
                           >
@@ -337,7 +341,7 @@ export function OrbitalDock() {
                 {favoriteApps.length === 0 && (
                   <div 
                     className="flex items-center justify-center px-4 text-sm text-muted-foreground"
-                    style={{ height: settings.dockIconSize }}
+                    style={{ height: dockIconSize }}
                   >
                     Favorite apps to add them to the dock
                   </div>

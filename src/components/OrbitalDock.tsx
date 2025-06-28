@@ -75,12 +75,15 @@ export function OrbitalDock() {
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
   const filteredApps = useMemo(() => {
+    if (isWiggleMode) {
+      return apps;
+    }
     return apps.filter(app => {
       const matchesCategory = selectedCategory === 'All' || app.category === selectedCategory;
       const matchesSearch = !debouncedSearchQuery || app.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [apps, debouncedSearchQuery, selectedCategory]);
+  }, [apps, debouncedSearchQuery, selectedCategory, isWiggleMode]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -113,7 +116,7 @@ export function OrbitalDock() {
   const gridCols = `grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10`;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
+    <div className="flex flex-col min-h-screen text-foreground transition-colors duration-300 overflow-x-hidden">
       <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
@@ -179,7 +182,6 @@ export function OrbitalDock() {
               </Reorder.Group>
             ) : (
               <motion.div
-                layout
                 className={cn("grid gap-x-4 gap-y-8", gridCols)}
               >
                 <AnimatePresence>
@@ -235,7 +237,7 @@ export function OrbitalDock() {
                             alt={`${app.name} icon`}
                             width={96}
                             height={96}
-                            data-ai-hint={appHints[app.name]}
+                            data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
                             className="rounded-lg bg-card object-cover"
                         />
                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">

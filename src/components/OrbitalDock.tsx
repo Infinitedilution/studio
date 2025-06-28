@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { motion, Reorder } from 'framer-motion';
 import { Grip, Search, Loader2, Settings as SettingsIcon, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -75,6 +75,7 @@ export function OrbitalDock() {
   const categories = useMemo(() => ['All', ...Array.from(new Set(apps.map(app => app.category))).sort()], [apps]);
   
   const filteredApps = useMemo(() => {
+    // When in wiggle mode, we don't filter, so reordering works on the full list.
     if (isWiggleMode) {
       return apps;
     }
@@ -107,7 +108,7 @@ export function OrbitalDock() {
 
   if (!isMounted) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -184,20 +185,17 @@ export function OrbitalDock() {
               <motion.div
                 className={cn("grid gap-x-4 gap-y-8", gridCols)}
               >
-                <AnimatePresence>
                   {filteredApps.map((app) => (
                     <motion.div
                       key={app.id}
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.5 }}
                       transition={{ type: "spring", stiffness: 400, damping: 20 }}
                       className="relative z-0"
                     >
                       <AppIcon app={app} isWiggleMode={isWiggleMode} onDelete={deleteApp} onEdit={setEditingApp} onToggleFavorite={toggleFavorite} iconSize={settings.iconSize}/>
                     </motion.div>
                   ))}
-                </AnimatePresence>
               </motion.div>
             )}
 
@@ -235,8 +233,8 @@ export function OrbitalDock() {
                         <Image
                             src={app.iconUrl}
                             alt={`${app.name} icon`}
-                            width={96}
-                            height={96}
+                            width={64}
+                            height={64}
                             data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
                             className="rounded-lg bg-card object-cover"
                         />
@@ -245,6 +243,11 @@ export function OrbitalDock() {
                         </span>
                     </motion.a>
                 ))}
+                {favoriteApps.length === 0 && (
+                  <div className="h-16 flex items-center justify-center px-4 text-sm text-muted-foreground">
+                    Favorite apps to add them to the dock
+                  </div>
+                )}
             </div>
         </motion.div>
       </footer>

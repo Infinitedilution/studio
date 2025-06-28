@@ -225,19 +225,19 @@ export function OrbitalDock() {
     <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
       <SheetTrigger asChild>
         <Button size="icon" className={cn('rounded-full', glassStyle, borderStyle)}>
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
-                <defs>
-                    <linearGradient id="icon-gradient" x1="10.5" y1="32" x2="55.5" y2="32" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#F97316"/>
-                        <stop offset="1" stop-color="#3B82F6"/>
-                    </linearGradient>
-                </defs>
-                <circle cx="32" cy="32" r="32" fill="black"/>
-                <g fill="url(#icon-gradient)">
-                    <path d="M12.5 19C15.5 18, 24.5 20.5, 39.5 24.5C41.1667 25.1667, 46.8 27.2, 53.5 28C49.5 27.5, 33.1667 24.5, 12.5 19Z"/>
-                    <path d="M10.5 32C24.5 31, 38.5 31, 55.5 32C50.5 33, 33.5 33, 10.5 32Z"/>
-                    <path d="M12.5 45C15.5 46, 24.5 43.5, 39.5 39.5C41.1667 38.8333, 46.8 36.8, 53.5 36C49.5 36.5, 33.1667 39.5, 12.5 45Z"/>
-                </g>
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+              <defs>
+                  <linearGradient id="icon-gradient" x1="12" y1="32" x2="52" y2="32" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#F97316"/>
+                      <stop offset="1" stopColor="#3B82F6"/>
+                  </linearGradient>
+              </defs>
+              <circle cx="32" cy="32" r="31" fill="black" stroke="url(#icon-gradient)" strokeWidth="2"/>
+              <g stroke="url(#icon-gradient)" strokeWidth="4" strokeLinecap="round">
+                  <path d="M18 24 C 26 18, 38 18, 46 24" />
+                  <path d="M16 32 H 48" />
+                  <path d="M18 40 C 26 46, 38 46, 46 40" />
+              </g>
             </svg>
           <span className="sr-only">Menu</span>
         </Button>

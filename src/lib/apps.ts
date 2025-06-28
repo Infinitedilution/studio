@@ -28,6 +28,14 @@ export const defaultApps: App[] = [
   { id: '30', name: '1inch', url: 'https://app.1inch.io', iconUrl: 'https://icon.horse/icon/1inch.io', category: 'Dex', isCustom: false, isFavorite: false },
   { id: '31', name: 'SushiSwap', url: 'https://sushi.com', iconUrl: 'https://icon.horse/icon/sushi.com', category: 'Dex', isCustom: false, isFavorite: false },
   { id: '32', name: 'PancakeSwap', url: 'https://pancakeswap.finance', iconUrl: 'https://icon.horse/icon/pancakeswap.finance', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '33', name: 'Sonic Market', url: 'https://www.sonic.market/', iconUrl: 'https://icon.horse/icon/sonic.market', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '34', name: 'Rabby Wallet', url: 'https://rabby.io/', iconUrl: 'https://icon.horse/icon/rabby.io', category: 'Utilities', isCustom: false, isFavorite: false },
+  { id: '35', name: 'PaintSwap', url: 'https://paintswap.io/', iconUrl: 'https://icon.horse/icon/paintswap.io', category: 'Dex', isCustom: false, isFavorite: false },
+  { id: '36', name: 'Sacra', url: 'https://sacra.game/', iconUrl: 'https://icon.horse/icon/sacra.game', category: 'Web3 Games', isCustom: false, isFavorite: false },
+  { id: '37', name: 'Estfor Kingdom', url: 'https://estfor.com/', iconUrl: 'https://icon.horse/icon/estfor.com', category: 'Web3 Games', isCustom: false, isFavorite: false },
+  { id: '38', name: 'Farcana', url: 'https://fagame.org/', iconUrl: 'https://icon.horse/icon/fagame.org', category: 'Web3 Games', isCustom: false, isFavorite: false },
+  { id: '39', name: 'Degen Express', url: 'https://degen.express/', iconUrl: 'https://icon.horse/icon/degen.express', category: 'Utilities', isCustom: false, isFavorite: false },
+  { id: '40', name: 'Safe', url: 'https://safe.global/', iconUrl: 'https://icon.horse/icon/safe.global', category: 'Utilities', isCustom: false, isFavorite: false },
 ];
 
 export const appHints: Record<string, string> = {
@@ -57,4 +65,12 @@ export const appHints: Record<string, string> = {
   '1inch': 'dex aggregator',
   'SushiSwap': 'decentralized exchange',
   'PancakeSwap': 'decentralized exchange',
+  'Sonic Market': 'decentralized exchange',
+  'Rabby Wallet': 'crypto wallet',
+  'PaintSwap': 'nft marketplace',
+  'Sacra': 'web3 game',
+  'Estfor Kingdom': 'web3 game',
+  'Farcana': 'web3 game',
+  'Degen Express': 'token trading',
+  'Safe': 'crypto wallet',
 };

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -130,7 +131,7 @@ export function OrbitalDock() {
 
   return (
     <div className="flex flex-col min-h-screen transition-colors duration-300">
-      <main className="flex-grow pt-12 pb-48 px-4 sm:px-8 md:px-12">
+      <main className="flex-grow pt-12 pb-64 px-4 sm:px-8 md:px-12">
         <div className="max-w-7xl mx-auto">
             <header className="flex flex-col items-center justify-center text-center mb-10 gap-6">
                 <h1 className="text-6xl font-headline font-light text-foreground">Sonic Dapps</h1>

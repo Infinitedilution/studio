@@ -31,6 +31,9 @@ export const defaultApps: App[] = [
   { id: 'sonic-27', name: 'SpookySwap', url: 'https://www.spooky.fi/', iconUrl: 'https://www.google.com/s2/favicons?domain=spooky.fi&sz=256', category: 'DEX', isCustom: false, isFavorite: false },
   { id: 'sonic-28', name: 'Eggs Finance', url: 'https://eggs.finance/', iconUrl: 'https://www.google.com/s2/favicons?domain=eggs.finance&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
   { id: 'sonic-29', name: 'Sonic Whale', url: 'https://sonicwhale.ai/', iconUrl: 'https://www.google.com/s2/favicons?domain=sonicwhale.ai&sz=256', category: 'AI', isCustom: false, isFavorite: false },
+  { id: 'sonic-30', name: 'DeBank', url: 'https://debank.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=debank.com&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-31', name: 'DexScreener', url: 'https://dexscreener.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=dexscreener.com&sz=256', category: 'Utilities', isCustom: false, isFavorite: false },
+  { id: 'sonic-32', name: 'Ruggie\'s Pizza', url: 'https://games.ruggiespizza.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=ruggiespizza.com&sz=256', category: 'Web3 Games', isCustom: false, isFavorite: false },
 ];
 
 export const appHints: Record<string, string> = {
@@ -62,5 +65,8 @@ export const appHints: Record<string, string> = {
   'Myrd Sacra': 'web3 game',
   'SpookySwap': 'decentralized exchange',
   'Eggs Finance': 'defi protocol',
-  'Sonic Whale': 'ai tool'
+  'Sonic Whale': 'ai tool',
+  'DeBank': 'defi portfolio',
+  'DexScreener': 'crypto charts',
+  'Ruggie\'s Pizza': 'web3 game'
 };

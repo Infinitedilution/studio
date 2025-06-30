@@ -12,9 +12,13 @@ const defaultSettings: Settings = {
   gradientIndex: 0,
 };
 
+// Define the function type without using generics that confuse the TSX parser.
+// This is safe because all settings values are currently numbers.
+type SetSettingFn = (key: keyof Settings, value: Settings[keyof Settings]) => void;
+
 interface SettingsContextType {
   settings: Settings;
-  setSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
+  setSetting: SetSettingFn;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -79,10 +83,13 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
   }, [settings.gradientIndex, isMounted]);
 
-  const setSetting = useCallback(<K extends keyof Settings,>(key: K, value: Settings[K]) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-  }, []);
-
+  const setSetting: SetSettingFn = useCallback(
+    (key, value) => {
+      setSettings(prev => ({ ...prev, [key]: value }));
+    },
+    [] // No dependencies needed as setSettings from useState is stable
+  );
+  
   const value = useMemo(() => ({ settings, setSetting }), [settings, setSetting]);
 
   return (

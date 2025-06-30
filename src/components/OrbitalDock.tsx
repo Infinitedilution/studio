@@ -614,7 +614,7 @@ export function OrbitalDock() {
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
             className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto max-w-full"
         >
-            <div className="flex items-end gap-3 px-4 py-1 overflow-x-auto snap-x snap-mandatory">
+            <div className="flex items-end gap-3 px-4 pt-12 pb-2 overflow-x-auto snap-x snap-mandatory">
                 <AnimatePresence>
                   {favoriteApps.map((app) => (
                       <motion.a 

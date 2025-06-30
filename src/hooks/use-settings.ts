@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
 import type { Settings } from '@/lib/types';
 import { PRESET_GRADIENTS } from '@/lib/gradients';
 
@@ -14,7 +14,7 @@ const defaultSettings: Settings = {
 
 // Define the function type without using generics that confuse the TSX parser.
 // This is safe because all settings values are currently numbers.
-type SetSettingFn = (key: keyof Settings, value: Settings[keyof Settings]) => void;
+type SetSettingFn = (key: keyof Settings, value: number) => void;
 
 interface SettingsContextType {
   settings: Settings;
@@ -92,9 +92,5 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
   
   const value = useMemo(() => ({ settings, setSetting }), [settings, setSetting]);
 
-  return (
-    <SettingsContext.Provider value={value}>
-      {children}
-    </SettingsContext.Provider>
-  );
+  return React.createElement(SettingsContext.Provider, { value }, children);
 };

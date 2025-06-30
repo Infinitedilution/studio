@@ -607,14 +607,14 @@ export function OrbitalDock() {
       />
 
 
-      <footer className="fixed bottom-0 left-0 right-0 flex justify-center p-4 z-20 pointer-events-none">
+      <footer className="fixed bottom-4 left-0 right-0 flex justify-center z-20 pointer-events-none">
         <motion.div 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.5 }}
-            className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg p-3 pointer-events-auto max-w-full"
+            className="bg-background/80 dark:bg-background/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg pointer-events-auto max-w-full"
         >
-            <div className="flex items-end gap-3 px-4 pb-2 overflow-x-auto overflow-y-visible snap-x snap-mandatory">
+            <div className="flex items-end gap-3 p-3 px-4 overflow-x-auto overflow-y-visible snap-x snap-mandatory">
                 <AnimatePresence>
                   {favoriteApps.map((app) => (
                       <motion.a 
@@ -623,7 +623,7 @@ export function OrbitalDock() {
                           rel="noopener noreferrer" 
                           key={app.id}
                           layoutId={`dock-${app.id}`}
-                          whileHover={{ y: -8, scale: 1.2 }}
+                          whileHover={{ y: -8, scale: 1.2, zIndex: 1 }}
                           transition={{ type: 'spring', stiffness: 300 }}
                           className="group relative snap-center"
                           title={app.name}

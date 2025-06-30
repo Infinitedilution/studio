@@ -19,8 +19,8 @@ export async function suggestCategoryAction(url: string) {
 export async function getFaviconAction(url: string) {
     try {
         const urlObj = new URL(url);
-        const domain = urlObj.hostname;
-        return { iconUrl: `https://www.google.com/s2/favicons?domain=${domain}&sz=256` };
+        const domain = urlObj.hostname.replace(/^www./, '');
+        return { iconUrl: `https://icon.horse/icon/${domain}` };
     } catch (error) {
         console.error("Invalid URL for favicon:", error);
         return { iconUrl: 'https://placehold.co/256x256.png' };

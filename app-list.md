@@ -1,0 +1,140 @@
+# Application List
+
+Here is the list of all applications and their websites currently in the project:
+
+- **LPB Sonic**: https://lpbsonic.xyz/
+- **Heyanon**: https://heyanon.ai/
+- **Equalizer**: https://equalizer.exchange/
+- **Shadow Exchange**: https://www.shadow.so/
+- **DeFive**: https://defive.com/
+- **Beets**: https://beets.fi/
+- **Fly Trade**: https://www.fly.trade/
+- **Metropolis**: https://metropolis.exchange/
+- **PaintSwap IO**: https://paintswap.io/
+- **Navigator Exchange**: https://www.navigator.exchange/
+- **Snake Finance**: https://snake.finance/
+- **SwapX**: https://swapx.fi/
+- **Derpe**: https://derpe.xyz/
+- **Tin Hat Cat**: https://www.tinhatcat.com/
+- **Goglz**: https://goglz.io/
+- **Wagmi**: https://wagmi.com/
+- **Spinit**: https://spinit.owl.games/
+- **FaGame**: https://fagame.org/
+- **Boom Markets**: https://boom.markets/
+- **8finity**: https://8finity.xyz/
+- **Stability Farm**: https://stability.farm/
+- **Lumos Coin**: https://lumoscoin.com/
+- **SNS**: https://sns.net/
+- **Hedgy Sonic**: https://hedgysonic.com/
+- **Indisonic**: https://www.indisonic.xyz/
+- **Myrd Sacra**: https://myrd.sacra.game/
+- **SpookySwap**: https://www.spooky.fi/
+- **Eggs Finance**: https://eggs.finance/
+- **Sonic Whale**: https://sonicwhale.ai/
+- **DeBank**: https://debank.com/
+- **DexScreener**: https://dexscreener.com/
+- **Ruggie's Pizza**: https://games.ruggiespizza.com/
+- **deBridge Finance**: https://debridge.finance/
+- **Silo Finance**: https://www.silofinance.com/
+- **Avalon Labs**: https://www.avalonlabs.io/
+- **Aave**: https://www.aave.com/
+- **Vicuna Finance**: https://vicunafinance.com/
+- **Curve**: https://curve.fi/
+- **Yearn Finance**: https://yearn.fi/
+- **Stryke**: https://www.stryke.xyz/
+- **Rings Money**: https://rings.money/
+- **MachFi**: https://www.machfi.xyz/
+- **SilverSwap**: https://silverswap.io/
+- **YEL Finance**: https://yel.finance/
+- **MarginZero**: https://www.marginzero.xyz/
+- **Thunderdome**: https://thunderdome.so/
+- **Kyber Network**: https://kyber.network/
+- **Krown Labs**: https://www.krownlabs.app/
+- **Origin Protocol**: https://www.originprotocol.com/
+- **Curve (Sonic)**: https://www.curve.finance/dex/sonic/pools/
+- **Chainspect**: https://chainspect.app/
+- **Rhino.fi**: https://rhino.fi/
+- **Snapshot**: https://snapshot.org/
+- **Odos**: https://app.odos.xyz/
+- **Alchemy**: https://alchemy.com/
+- **Summer.fi**: https://summer.fi/
+- **Micro3**: https://micro3.io/
+- **Tenderly**: https://tenderly.co/
+- **Eliteness**: https://eliteness.network/
+- **Multisender**: https://classic.multisender.app/
+- **Magpie**: https://www.magpiefi.xyz/
+- **Sushi (Sonic)**: https://www.sushi.com/sonic/swap
+- **Yoko**: https://yoko.live/
+- **Arkham**: https://intel.arkm.com/
+- **Spectra**: https://app.spectra.finance/pools
+- **TRM Labs**: https://www.trmlabs.com/
+- **Euler Finance**: https://www.euler.finance/
+- **Napier Finance**: https://napier.finance/
+- **sNFT**: https://snft.pro/
+- **LND Fi**: https://www.lnd.fi/
+- **WooFi**: https://woofi.com/
+- **OnFinality**: https://www.onfinality.me/
+- **Chainsight**: https://chainsight.network/
+- **Ichi**: https://www.ichi.org/
+- **Lynx Finance**: https://www.lynx.finance/
+- **OpenOcean**: https://app.openocean.finance/
+- **Biconomy**: https://www.biconomy.io/
+- **Solv Finance**: https://solv.finance/
+- **ZNS Connect**: https://www.znsconnect.io/
+- **Owlto Finance**: https://owlto.finance/
+- **Project Zero**: https://projectzero.io/
+- **Beefy**: https://beefy.com/
+- **Safe**: https://safe.global/
+- **MCLB**: https://mclb.org/
+- **DexFi**: https://dexfi.com/
+- **EncLabs Finance**: https://enclabs.finance/
+- **Band Protocol**: https://www.bandprotocol.com/
+- **Envio**: https://envio.dev/
+- **SideShift.ai**: https://sideshift.ai/
+- **SuperSonic**: https://www.supersonic.trade/
+- **Stargate Finance**: https://stargate.finance/
+- **Frax Finance**: https://frax.finance/
+- **Astrolescent**: https://astrolescent.com/bridge
+- **Meson**: https://meson.fi/
+- **Estfor**: https://estfor.com/
+- **CrossCurve**: https://app.crosscurve.fi/swap
+- **SimpleSwap**: https://simpleswap.io/
+- **Bungee**: https://new.bungee.exchange/
+- **Gamma**: https://www.gamma.xyz/
+- **LlamaPay**: https://llamapay.io/
+- **Gasp**: https://www.gasp.xyz/
+- **Solidly**: https://solidly.com/
+- **Fireblocks**: https://www.fireblocks.com/
+- **Sonic Market**: https://www.sonic.market/
+- **Layer3**: https://app.layer3.xyz/
+- **Oku Trade**: https://oku.trade/
+- **TokenPocket**: https://www.tokenpocket.pro/
+- **Portals**: https://www.portals.fi/
+- **Yelay**: https://app.yelay.io/sonic
+- **Paladin**: https://paladin.vote/
+- **Perq Finance**: https://dev.perq.finance/pods/SONIC
+- **BlazingBot**: https://app.blazingbot.com/dashboard/pro/sonic
+- **Vertex Protocol**: https://vertexprotocol.com/
+- **vfat.tools**: https://vfat.io/
+- **OpenBlock Labs**: https://www.openblocklabs.com/
+- **Symbiosis**: https://app.symbiosis.finance/
+- **Pendle Finance**: https://www.pendle.finance/
+- **Blockchain Bureau**: https://blockchainbureau.com/
+- **Sacra Game**: https://sacra.game/
+- **Avalon Finance**: https://www.avalonfinance.xyz/
+- **fMoney Market**: https://www.fmoney.market/
+- **Sparta**: https://sparta.my/
+- **Allora Network**: https://allora.network/
+- **Swaps.io**: https://swaps.io/
+- **Router Nitro**: https://app.routernitro.com/
+- **Dune**: https://dune.com/home
+- **Sentio**: https://www.sentio.xyz/
+- **Orderly Network**: https://orderly.network/
+- **Amped Finance**: https://amped.finance/
+- **Steer Finance**: https://steer.finance/
+- **NFTs2Me**: https://nfts2me.com/
+- **Lazy Bear**: https://lazybear.cc/
+- **Angles**: https://angles.fi/
+- **HyperSonic Exchange**: https://hypersonic.exchange/
+- **Web3Auth**: https://web3auth.io/
+- **Rubic**: https://rubic.exchange/

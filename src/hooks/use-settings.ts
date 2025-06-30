@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, createElement } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
 import type { Settings } from '@/lib/types';
 import { PRESET_GRADIENTS } from '@/lib/gradients';
 
@@ -79,11 +79,15 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
   }, [settings.gradientIndex, isMounted]);
 
-  const setSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
+  const setSetting = useCallback(<K extends keyof Settings,>(key: K, value: Settings[K]) => {
     setSettings(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
-  const value = { settings, setSetting };
+  const value = useMemo(() => ({ settings, setSetting }), [settings, setSetting]);
 
-  return createElement(SettingsContext.Provider, { value }, children);
+  return (
+    <SettingsContext.Provider value={value}>
+      {children}
+    </SettingsContext.Provider>
+  );
 };

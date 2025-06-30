@@ -26,7 +26,6 @@ import type { App } from '@/lib/types';
 import { AddAppDialog } from '@/components/AddAppDialog';
 import { AppIcon } from '@/components/AppIcon';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import { appHints } from '@/lib/apps';
 import { useDebounce } from '@/hooks/use-debounce';
 import { EditAppDialog } from './EditAppDialog';
@@ -35,6 +34,7 @@ import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from "next-themes";
 import { useIsMobile, useWindowSize } from '@/hooks/use-mobile';
 import { ScrollArea } from './ui/scroll-area';
+import { AppImage } from './AppImage';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -484,9 +484,8 @@ export function OrbitalDock() {
           >
              <motion.div animate={{ rotate: [-1.5, 1.5, -1.5], transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" } }}>
               <div style={{ width: settings.iconSize, height: settings.iconSize }} className="relative">
-                <Image
-                  src={app.iconUrl}
-                  alt={`${app.name} icon`}
+                <AppImage
+                  app={app}
                   fill
                   sizes={`${settings.iconSize}px`}
                   data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
@@ -638,9 +637,8 @@ export function OrbitalDock() {
                             }}
                             className="relative"
                           >
-                            <Image
-                                src={app.iconUrl}
-                                alt={`${app.name} icon`}
+                            <AppImage
+                                app={app}
                                 fill
                                 sizes={`${dockIconSize}px`}
                                 data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}

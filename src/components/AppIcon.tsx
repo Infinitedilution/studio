@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pencil, X, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { cn } from '@/lib/utils';
 import type { App } from '@/lib/types';
 import { appHints } from '@/lib/apps';
 import { useRef } from 'react';
+import { AppImage } from './AppImage';
 
 interface AppIconProps {
   app: App;
@@ -147,9 +147,8 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
           className="relative"
           style={{ width: iconSize, height: iconSize }}
         >
-          <Image
-            src={app.iconUrl}
-            alt={`${app.name} icon`}
+          <AppImage
+            app={app}
             fill
             sizes={`${iconSize}px`}
             data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}

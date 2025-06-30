@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus } from 'lucide-react';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -33,8 +33,8 @@ import { EditAppDialog } from './EditAppDialog';
 import { SettingsDialog } from './SettingsDialog';
 import { useSettings } from '@/hooks/use-settings';
 import { useTheme } from "next-themes";
-import { Label } from './ui/label';
 import { useIsMobile, useWindowSize } from '@/hooks/use-mobile';
+import { ScrollArea } from './ui/scroll-area';
 
 export function OrbitalDock() {
   const [apps, setApps] = useState<App[]>([]);
@@ -77,21 +77,40 @@ export function OrbitalDock() {
       if (storedAppsJSON) {
         const storedApps = JSON.parse(storedAppsJSON);
         if (Array.isArray(storedApps)) {
-          const customApps = storedApps.filter(app => app.isCustom === true);
+           // Create a map of IDs from defaultApps for quick lookups
+          const defaultAppIds = new Set(defaultApps.map(app => app.id));
+          
+          // Get custom apps from storage
+          const customApps = storedApps.filter((app: App) => app.isCustom === true);
 
-          const favoriteStatusMap = new Map<string, boolean>();
-          storedApps.forEach(app => {
+          // Get all non-custom apps from storage that still exist in defaultApps
+          const savedDefaultApps = storedApps.filter((app: App) => !app.isCustom && defaultAppIds.has(app.id));
+
+          // Create a map of favorite and order statuses from all stored apps
+          const statusMap = new Map<string, { isFavorite: boolean; order?: number }>();
+          storedApps.forEach((app: App, index: number) => {
             if (app && app.id) {
-              favoriteStatusMap.set(app.id, app.isFavorite);
+              statusMap.set(app.id, { isFavorite: app.isFavorite, order: index });
             }
           });
 
+          // Update defaultApps with stored favorite status
           const updatedDefaultApps = defaultApps.map(app => ({
             ...app,
-            isFavorite: favoriteStatusMap.get(app.id) ?? app.isFavorite,
+            isFavorite: statusMap.get(app.id)?.isFavorite ?? app.isFavorite,
           }));
+
+          // Combine the lists: updated default apps and custom apps
+          let combinedApps = [...updatedDefaultApps, ...customApps];
+
+          // Sort combined apps based on the stored order
+          combinedApps.sort((a, b) => {
+            const orderA = statusMap.get(a.id)?.order ?? Infinity;
+            const orderB = statusMap.get(b.id)?.order ?? Infinity;
+            return orderA - orderB;
+          });
           
-          finalApps = [...updatedDefaultApps, ...customApps];
+          finalApps = combinedApps;
         }
       }
       
@@ -110,9 +129,11 @@ export function OrbitalDock() {
   }, [apps, isMounted]);
   
   useEffect(() => {
-    setCurrentPage(0);
-    setDirection(0);
-  }, [debouncedSearchQuery, selectedCategory]);
+    if (!isWiggleMode) {
+      setCurrentPage(0);
+      setDirection(0);
+    }
+  }, [debouncedSearchQuery, selectedCategory, isWiggleMode]);
 
   const startWiggleMode = useCallback(() => {
     if (!isWiggleMode) {
@@ -130,8 +151,9 @@ export function OrbitalDock() {
     }
   }
 
-  const handleBackgroundClick = () => {
-    if (isWiggleMode) {
+  const handleBackgroundClick = (e: React.MouseEvent) => {
+    // Check if the click is on the main background, not on an app icon
+    if (e.target === e.currentTarget && isWiggleMode) {
       setIsWiggleMode(false);
     }
   };
@@ -145,6 +167,30 @@ export function OrbitalDock() {
       return matchesCategory && matchesSearch;
     });
   }, [apps, debouncedSearchQuery, selectedCategory]);
+
+  const handleReorder = (newOrder: App[]) => {
+    // Create a map of the new order for filtered apps
+    const newOrderMap = new Map(newOrder.map((app, index) => [app.id, index]));
+  
+    // Create a new array for all apps, preserving the original order of non-filtered apps
+    const reorderedApps = [...apps];
+  
+    reorderedApps.sort((a, b) => {
+      const aIsFiltered = newOrderMap.has(a.id);
+      const bIsFiltered = newOrderMap.has(b.id);
+  
+      if (aIsFiltered && bIsFiltered) {
+        // Both are in the filtered list, sort by new order
+        return (newOrderMap.get(a.id) ?? 0) - (newOrderMap.get(b.id) ?? 0);
+      }
+      if (aIsFiltered) return -1; // a is filtered, b is not, so a comes first
+      if (bIsFiltered) return 1;  // b is filtered, a is not, so b comes first
+      return 0; // Neither are in the filtered list, keep original relative order
+    });
+  
+    setApps(reorderedApps);
+  };
+  
 
   useLayoutEffect(() => {
     const calculateAppsPerPage = () => {
@@ -170,10 +216,15 @@ export function OrbitalDock() {
       }
     };
     
-    calculateAppsPerPage();
-  }, [debouncedSize, settings.iconSize, filteredApps]);
+    if (!isWiggleMode) {
+      calculateAppsPerPage();
+    }
+  }, [debouncedSize, settings.iconSize, filteredApps, isWiggleMode]);
 
-  const totalPages = useMemo(() => Math.ceil(filteredApps.length / appsPerPage), [filteredApps, appsPerPage]);
+  const totalPages = useMemo(() => {
+    if (isWiggleMode) return 1;
+    return Math.ceil(filteredApps.length / appsPerPage);
+  }, [filteredApps, appsPerPage, isWiggleMode]);
   
   useEffect(() => {
     if (currentPage >= totalPages && totalPages > 0) {
@@ -182,10 +233,11 @@ export function OrbitalDock() {
   }, [totalPages, currentPage]);
 
   const paginatedApps = useMemo(() => {
+    if (isWiggleMode) return filteredApps;
     const startIndex = currentPage * appsPerPage;
     const endIndex = startIndex + appsPerPage;
     return filteredApps.slice(startIndex, endIndex);
-  }, [filteredApps, currentPage, appsPerPage]);
+  }, [filteredApps, currentPage, appsPerPage, isWiggleMode]);
   
   const favoriteApps = useMemo(() => apps.filter(app => app.isFavorite), [apps]);
 
@@ -240,7 +292,6 @@ export function OrbitalDock() {
       opacity: 0,
     }),
   };
-
 
   if (!isMounted) {
     return (
@@ -301,10 +352,10 @@ export function OrbitalDock() {
                 onClick={handleToggleWiggleMode}
                 className={cn(`rounded-full transition-colors h-10 w-10`, glassStyle, borderStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
                 aria-pressed={isWiggleMode}
-                title="Toggle edit mode"
+                title={isWiggleMode ? "Done Editing" : "Toggle edit mode"}
             >
-                <Grip className="h-5 w-5" />
-                <span className="sr-only">Toggle edit mode</span>
+                {isWiggleMode ? <Check className="h-5 w-5" /> : <Grip className="h-5 w-5" />}
+                <span className="sr-only">{isWiggleMode ? "Done Editing" : "Toggle edit mode"}</span>
             </Button>
             <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
                 <SettingsIcon className="h-5 w-5" />
@@ -394,13 +445,12 @@ export function OrbitalDock() {
           </DropdownMenu>
           <div className="grid grid-cols-3 gap-2">
             <Button
-              size="icon"
               onClick={handleToggleWiggleMode}
               className={cn(`rounded-full transition-colors h-12 w-full`, mobileSheetGlassStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
               aria-pressed={isWiggleMode}
               title="Toggle edit mode"
             >
-              <Grip className="h-5 w-5" />
+              {isWiggleMode ? <Check className="h-5 w-5" /> : <Grip className="h-5 w-5" />}
             </Button>
             <Button size="icon" onClick={() => { setIsSettingsOpen(true); setIsMobileSheetOpen(false); }} className={cn(`rounded-full h-12 w-full`, mobileSheetGlassStyle)}>
               <SettingsIcon className="h-5 w-5" />
@@ -413,6 +463,80 @@ export function OrbitalDock() {
         </div>
       </SheetContent>
     </Sheet>
+  );
+
+  const renderWiggleModeGrid = () => (
+    <ScrollArea className="h-full">
+      <Reorder.Group
+        as="div"
+        axis="y"
+        values={filteredApps}
+        onReorder={handleReorder}
+        className={cn("grid content-start gap-x-4 gap-y-6 p-2", gridCols)}
+      >
+        {filteredApps.map((app) => (
+          <Reorder.Item
+            key={app.id}
+            value={app}
+            className="relative flex flex-col items-center gap-1 text-center group"
+            initial={{ scale: 1 }}
+            whileDrag={{ scale: 1.1, zIndex: 10 }}
+          >
+             <motion.div animate={{ rotate: [-1.5, 1.5, -1.5], transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" } }}>
+              <div style={{ width: settings.iconSize, height: settings.iconSize }} className="relative">
+                <Image
+                  src={app.iconUrl}
+                  alt={`${app.name} icon`}
+                  fill
+                  sizes={`${settings.iconSize}px`}
+                  data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
+                  className="rounded-2xl bg-card object-cover shadow-lg"
+                  draggable={false}
+                />
+              </div>
+            </motion.div>
+            <p className="text-[11px] leading-tight pt-1 font-medium text-foreground/90 dark:text-foreground/80 truncate w-full">{app.name}</p>
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+    </ScrollArea>
+  );
+
+  const renderNormalGrid = () => (
+    <div className="relative overflow-hidden h-full">
+      <AnimatePresence initial={false} custom={direction}>
+        <motion.div
+          ref={gridRef}
+          key={currentPage}
+          custom={direction}
+          variants={pageVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={handleDragEnd}
+          transition={{
+            x: { type: "spring", stiffness: 300, damping: 35 },
+            opacity: { duration: 0.2 }
+          }}
+          className={cn("absolute inset-0 grid content-start gap-x-4 gap-y-6 p-2", gridCols)}
+        >
+          {paginatedApps.map((app) => (
+            <AppIcon
+              key={app.id}
+              app={app}
+              isWiggleMode={isWiggleMode}
+              onDelete={deleteApp}
+              onEdit={setEditingApp}
+              onToggleFavorite={toggleFavorite}
+              iconSize={settings.iconSize}
+              onStartWiggleMode={startWiggleMode}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 
   return (
@@ -428,42 +552,9 @@ export function OrbitalDock() {
         onClick={handleBackgroundClick}
       >
         <div className="max-w-7xl mx-auto h-full">
-          <div className="relative overflow-hidden h-full">
-            <AnimatePresence initial={false} custom={direction}>
-              <motion.div
-                ref={gridRef}
-                key={currentPage}
-                custom={direction}
-                variants={pageVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={handleDragEnd}
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 35 },
-                  opacity: { duration: 0.2 }
-                }}
-                className={cn("absolute inset-0 grid content-start gap-x-4 gap-y-6 p-2", gridCols)}
-              >
-                {paginatedApps.map((app) => (
-                  <AppIcon
-                    key={app.id}
-                    app={app}
-                    isWiggleMode={isWiggleMode}
-                    onDelete={deleteApp}
-                    onEdit={setEditingApp}
-                    onToggleFavorite={toggleFavorite}
-                    iconSize={settings.iconSize}
-                    onStartWiggleMode={startWiggleMode}
-                  />
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          {isWiggleMode ? renderWiggleModeGrid() : renderNormalGrid()}
 
-            {totalPages > 1 && (
+            {!isWiggleMode && totalPages > 1 && (
               <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-2">
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <button
@@ -550,8 +641,8 @@ export function OrbitalDock() {
                             <Image
                                 src={app.iconUrl}
                                 alt={`${app.name} icon`}
-                                width={128}
-                                height={128}
+                                fill
+                                sizes={`${dockIconSize}px`}
                                 data-ai-hint={appHints[app.name] || app.name.toLowerCase().split(' ').slice(0, 2).join(' ')}
                                 className="rounded-lg bg-card object-cover"
                             />

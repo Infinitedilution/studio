@@ -35,6 +35,9 @@ export const defaultApps: App[] = [
   { id: 'sonic-31', name: 'DexScreener', url: 'https://dexscreener.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=dexscreener.com&sz=256', category: 'Utilities', isCustom: false, isFavorite: false },
   { id: 'sonic-32', name: 'Ruggie\'s Pizza', url: 'https://games.ruggiespizza.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=ruggiespizza.com&sz=256', category: 'Web3 Games', isCustom: false, isFavorite: false },
   { id: 'sonic-33', name: 'deBridge Finance', url: 'https://debridge.finance/', iconUrl: 'https://www.google.com/s2/favicons?domain=debridge.finance&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-34', name: 'Silo Finance', url: 'https://www.silofinance.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=silofinance.com&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-35', name: 'Avalon Labs', url: 'https://www.avalonlabs.io/', iconUrl: 'https://www.google.com/s2/favicons?domain=avalonlabs.io&sz=256', category: 'Development', isCustom: false, isFavorite: false },
+  { id: 'sonic-36', name: 'Aave', url: 'https://www.aave.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=aave.com&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
 ];
 
 export const appHints: Record<string, string> = {
@@ -70,5 +73,8 @@ export const appHints: Record<string, string> = {
   'DeBank': 'defi portfolio',
   'DexScreener': 'crypto charts',
   'Ruggie\'s Pizza': 'web3 game',
-  'deBridge Finance': 'defi bridge'
+  'deBridge Finance': 'defi bridge',
+  'Silo Finance': 'defi lending',
+  'Avalon Labs': 'web3 venture',
+  'Aave': 'defi lending'
 };

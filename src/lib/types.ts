@@ -6,10 +6,12 @@ export interface App {
   category: string;
   isCustom: boolean;
   isFavorite: boolean;
+  description?: string;
 }
 
 export interface Settings {
   iconSize: number;
   dockIconSize: number;
   gradientIndex: number;
+  mode: 'dock' | 'wiki';
 }

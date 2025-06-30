@@ -17,10 +17,12 @@ interface AppIconProps {
   onToggleFavorite: (id: string) => void;
   onStartWiggleMode: () => void;
   iconSize: number;
+  mode: 'dock' | 'wiki';
 }
 
-export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite, onStartWiggleMode, iconSize }: AppIconProps) {
+export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite, onStartWiggleMode, iconSize, mode }: AppIconProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isWikiMode = mode === 'wiki';
 
   const handlePointerDown = () => {
     if (isWiggleMode) return;
@@ -126,8 +128,8 @@ export function AppIcon({ app, isWiggleMode, onEdit, onDelete, onToggleFavorite,
       </AnimatePresence>
 
       <a 
-        href={app.url} 
-        target="_blank" 
+        href={isWikiMode ? `/app/${app.id}` : app.url} 
+        target={isWikiMode ? '_self' : '_blank'}
         rel="noopener noreferrer" 
         className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
         onPointerDown={handlePointerDown}

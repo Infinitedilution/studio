@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
-import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus, Check } from 'lucide-react';
+import { Grip, Search, Loader2, Settings as SettingsIcon, Filter, Sun, Moon, Plus, Check, Rocket, Book } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -44,7 +44,7 @@ export function OrbitalDock() {
   const [isMounted, setIsMounted] = useState(false);
   const [editingApp, setEditingApp] = useState<App | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { settings } = useSettings();
+  const { settings, setSetting } = useSettings();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const { theme, setTheme } = useTheme();
   const [isAddAppDialogOpen, setIsAddAppDialogOpen] = useState(false);
@@ -87,10 +87,10 @@ export function OrbitalDock() {
           const savedDefaultApps = storedApps.filter((app: App) => !app.isCustom && defaultAppIds.has(app.id));
 
           // Create a map of favorite and order statuses from all stored apps
-          const statusMap = new Map<string, { isFavorite: boolean; order?: number }>();
+          const statusMap = new Map<string, { isFavorite: boolean; order?: number, description?: string }>();
           storedApps.forEach((app: App, index: number) => {
             if (app && app.id) {
-              statusMap.set(app.id, { isFavorite: app.isFavorite, order: index });
+              statusMap.set(app.id, { isFavorite: app.isFavorite, order: index, description: app.description });
             }
           });
 
@@ -98,6 +98,7 @@ export function OrbitalDock() {
           const updatedDefaultApps = defaultApps.map(app => ({
             ...app,
             isFavorite: statusMap.get(app.id)?.isFavorite ?? app.isFavorite,
+            description: statusMap.get(app.id)?.description ?? app.description,
           }));
 
           // Combine the lists: updated default apps and custom apps
@@ -127,6 +128,14 @@ export function OrbitalDock() {
       localStorage.setItem('orbital-dock-apps', JSON.stringify(apps));
     }
   }, [apps, isMounted]);
+
+  useEffect(() => {
+    if (settings.mode === 'wiki') {
+      setTheme('light');
+    } else {
+      setTheme('dark');
+    }
+  }, [settings.mode, setTheme]);
   
   useEffect(() => {
     if (!isWiggleMode) {
@@ -260,6 +269,10 @@ export function OrbitalDock() {
   const toggleFavorite = (id: string) => {
     setApps(prev => prev.map(app => app.id === id ? { ...app, isFavorite: !app.isFavorite } : app));
   };
+
+  const handleModeToggle = () => {
+    setSetting('mode', settings.mode === 'dock' ? 'wiki' : 'dock');
+  };
   
   const handleDragEnd = (e: any, { offset, velocity }: { offset: { x: number; y: number }; velocity: { x: number; y: number } }) => {
     const swipePower = Math.abs(offset.x) * velocity.x;
@@ -307,7 +320,7 @@ export function OrbitalDock() {
   const mobileSheetGlassStyle = "bg-background/80 backdrop-blur-xl border border-white/10 text-foreground placeholder:text-foreground/80";
 
   const desktopControls = (
-    <div className="w-full max-w-4xl flex items-center gap-2">
+    <div className="w-full max-w-5xl flex items-center gap-2">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button size="icon" className={cn(`h-10 w-10 flex-shrink-0 rounded-full`, glassStyle, borderStyle)} disabled={isWiggleMode}>
@@ -340,6 +353,13 @@ export function OrbitalDock() {
         <div className="flex items-center gap-2">
             <Button
                 className={cn(`font-semibold h-10 px-5 rounded-full`, glassStyle)}
+                onClick={handleModeToggle}
+            >
+                {settings.mode === 'dock' ? <Book className="mr-2 h-4 w-4" /> : <Rocket className="mr-2 h-4 w-4" />}
+                Switch to {settings.mode === 'dock' ? 'Wiki' : 'Dock'}
+            </Button>
+            <Button
+                className={cn(`font-semibold h-10 px-5 rounded-full`, glassStyle)}
                 onClick={() => {
                     setAddAppInitialValue(undefined);
                     setIsAddAppDialogOpen(true);
@@ -360,11 +380,6 @@ export function OrbitalDock() {
             <Button size="icon" onClick={() => setIsSettingsOpen(true)} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
                 <SettingsIcon className="h-5 w-5" />
                  <span className="sr-only">Open Settings</span>
-            </Button>
-            <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-10 w-10`, glassStyle, borderStyle)}>
-                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Toggle theme</span>
             </Button>
         </div>
     </div>
@@ -443,7 +458,7 @@ export function OrbitalDock() {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             <Button
               onClick={handleToggleWiggleMode}
               className={cn(`rounded-full transition-colors h-12 w-full`, mobileSheetGlassStyle, isWiggleMode && "bg-accent text-accent-foreground border-accent")}
@@ -455,7 +470,17 @@ export function OrbitalDock() {
             <Button size="icon" onClick={() => { setIsSettingsOpen(true); setIsMobileSheetOpen(false); }} className={cn(`rounded-full h-12 w-full`, mobileSheetGlassStyle)}>
               <SettingsIcon className="h-5 w-5" />
             </Button>
-            <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-12 w-full`, mobileSheetGlassStyle)}>
+            <Button
+              onClick={() => {
+                handleModeToggle();
+                setIsMobileSheetOpen(false);
+              }}
+              className={cn(`rounded-full transition-colors h-12 w-full`, mobileSheetGlassStyle)}
+              title={`Switch to ${settings.mode === 'dock' ? 'Wiki' : 'Dock'}`}
+            >
+              {settings.mode === 'dock' ? <Book className="h-5 w-5" /> : <Rocket className="h-5 w-5" />}
+            </Button>
+             <Button size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={cn(`rounded-full h-12 w-full`, mobileSheetGlassStyle)}>
               <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             </Button>
@@ -531,6 +556,7 @@ export function OrbitalDock() {
               onToggleFavorite={toggleFavorite}
               iconSize={settings.iconSize}
               onStartWiggleMode={startWiggleMode}
+              mode={settings.mode}
             />
           ))}
         </motion.div>
@@ -541,7 +567,9 @@ export function OrbitalDock() {
   return (
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
       <header ref={headerRef} className="flex flex-row items-center justify-between pt-6 mb-6 px-4 md:flex-col md:justify-center md:text-center md:pt-10 md:mb-8 md:gap-6">
-        <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">Sonic Wiki</h1>
+        <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">
+          {settings.mode === 'dock' ? 'Orbital Dock' : 'Sonic Wiki'}
+        </h1>
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>
 

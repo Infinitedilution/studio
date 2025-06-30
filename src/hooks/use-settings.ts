@@ -10,11 +10,10 @@ const defaultSettings: Settings = {
   iconSize: 80,
   dockIconSize: 64,
   gradientIndex: 0,
+  mode: 'dock',
 };
 
-// Define the function type without using generics that confuse the TSX parser.
-// This is safe because all settings values are currently numbers.
-type SetSettingFn = (key: keyof Settings, value: number) => void;
+type SetSettingFn = <K extends keyof Settings>(key: K, value: Settings[K]) => void;
 
 interface SettingsContextType {
   settings: Settings;
@@ -83,14 +82,13 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
   }, [settings.gradientIndex, isMounted]);
 
-  const setSetting: SetSettingFn = useCallback(
-    (key, value) => {
+  const setSetting = useCallback((key: keyof Settings, value: any) => {
       setSettings(prev => ({ ...prev, [key]: value }));
     },
-    [] // No dependencies needed as setSettings from useState is stable
-  );
+    []
+  ) as SetSettingFn;
   
   const value = useMemo(() => ({ settings, setSetting }), [settings, setSetting]);
 
-  return React.createElement(SettingsContext.Provider, { value }, children);
+  return React.createElement(SettingsContext.Provider, { value: value }, children);
 };

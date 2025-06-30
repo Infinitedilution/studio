@@ -7,8 +7,8 @@ import { Web3Provider } from '@/components/Web3Provider';
 import { BodyStyler } from '@/components/BodyStyler';
 
 export const metadata: Metadata = {
-  title: 'Sonic Wiki',
-  description: 'Your personal wiki for the Sonic ecosystem.',
+  title: 'Orbital Dock',
+  description: 'Your personal command center for the Sonic ecosystem.',
 };
 
 export default function RootLayout({

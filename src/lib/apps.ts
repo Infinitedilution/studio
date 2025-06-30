@@ -38,6 +38,15 @@ export const defaultApps: App[] = [
   { id: 'sonic-34', name: 'Silo Finance', url: 'https://www.silofinance.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=silofinance.com&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
   { id: 'sonic-35', name: 'Avalon Labs', url: 'https://www.avalonlabs.io/', iconUrl: 'https://www.google.com/s2/favicons?domain=avalonlabs.io&sz=256', category: 'Development', isCustom: false, isFavorite: false },
   { id: 'sonic-36', name: 'Aave', url: 'https://www.aave.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=aave.com&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-37', name: 'Vicuna Finance', url: 'https://vicunafinance.com/', iconUrl: 'https://www.google.com/s2/favicons?domain=vicunafinance.com&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-38', name: 'Curve', url: 'https://curve.fi/', iconUrl: 'https://www.google.com/s2/favicons?domain=curve.fi&sz=256', category: 'DEX', isCustom: false, isFavorite: false },
+  { id: 'sonic-39', name: 'Yearn Finance', url: 'https://yearn.fi/', iconUrl: 'https://www.google.com/s2/favicons?domain=yearn.fi&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-40', name: 'Stryke', url: 'https://www.stryke.xyz/', iconUrl: 'https://www.google.com/s2/favicons?domain=stryke.xyz&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-41', name: 'Rings Money', url: 'https://rings.money/', iconUrl: 'https://www.google.com/s2/favicons?domain=rings.money&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-42', name: 'MachFi', url: 'https://www.machfi.xyz/', iconUrl: 'https://www.google.com/s2/favicons?domain=machfi.xyz&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-43', name: 'SilverSwap', url: 'https://silverswap.io/', iconUrl: 'https://www.google.com/s2/favicons?domain=silverswap.io&sz=256', category: 'DEX', isCustom: false, isFavorite: false },
+  { id: 'sonic-44', name: 'YEL Finance', url: 'https://yel.finance/', iconUrl: 'https://www.google.com/s2/favicons?domain=yel.finance&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
+  { id: 'sonic-45', name: 'MarginZero', url: 'https://www.marginzero.xyz/', iconUrl: 'https://www.google.com/s2/favicons?domain=marginzero.xyz&sz=256', category: 'DeFi', isCustom: false, isFavorite: false },
 ];
 
 export const appHints: Record<string, string> = {
@@ -76,5 +85,14 @@ export const appHints: Record<string, string> = {
   'deBridge Finance': 'defi bridge',
   'Silo Finance': 'defi lending',
   'Avalon Labs': 'web3 venture',
-  'Aave': 'defi lending'
+  'Aave': 'defi lending',
+  'Vicuna Finance': 'defi protocol',
+  'Curve': 'defi protocol',
+  'Yearn Finance': 'defi yield',
+  'Stryke': 'defi options',
+  'Rings Money': 'defi protocol',
+  'MachFi': 'defi protocol',
+  'SilverSwap': 'decentralized exchange',
+  'YEL Finance': 'yield farming',
+  'MarginZero': 'defi trading'
 };

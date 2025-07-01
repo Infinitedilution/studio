@@ -1,5 +1,5 @@
-import { OrbitalDock } from '@/components/OrbitalDock';
+import { SonicDock } from '@/components/OrbitalDock';
 
 export default function Home() {
-  return <OrbitalDock />;
+  return <SonicDock />;
 }

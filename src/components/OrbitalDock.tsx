@@ -36,7 +36,7 @@ import { useIsMobile, useWindowSize } from '@/hooks/use-mobile';
 import { ScrollArea } from './ui/scroll-area';
 import { AppImage } from './AppImage';
 
-export function OrbitalDock() {
+export function SonicDock() {
   const [apps, setApps] = useState<App[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -71,7 +71,7 @@ export function OrbitalDock() {
   
   useEffect(() => {
     try {
-      const storedAppsJSON = localStorage.getItem('orbital-dock-apps');
+      const storedAppsJSON = localStorage.getItem('sonic-dock-apps');
       let finalApps: App[] = defaultApps;
 
       if (storedAppsJSON) {
@@ -125,7 +125,7 @@ export function OrbitalDock() {
 
   useEffect(() => {
     if (isMounted) {
-      localStorage.setItem('orbital-dock-apps', JSON.stringify(apps));
+      localStorage.setItem('sonic-dock-apps', JSON.stringify(apps));
     }
   }, [apps, isMounted]);
 
@@ -568,7 +568,7 @@ export function OrbitalDock() {
     <div className="flex flex-col h-screen overflow-hidden transition-colors duration-300">
       <header ref={headerRef} className="flex flex-row items-center justify-between pt-6 mb-6 px-4 md:flex-col md:justify-center md:text-center md:pt-10 md:mb-8 md:gap-6">
         <h1 className="text-4xl font-headline font-light text-foreground md:text-5xl lg:text-6xl">
-          {settings.mode === 'dock' ? 'Orbital Dock' : 'Sonic Wiki'}
+          {settings.mode === 'dock' ? 'SONIC DOCK' : 'Sonic Wiki'}
         </h1>
         {isMobile ? <div className="absolute top-8 right-4">{mobileControls}</div> : desktopControls}
       </header>

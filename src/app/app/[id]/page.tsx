@@ -24,7 +24,7 @@ export default function AppDetailPage() {
 
   useEffect(() => {
     try {
-      const storedAppsJSON = localStorage.getItem('orbital-dock-apps');
+      const storedAppsJSON = localStorage.getItem('sonic-dock-apps');
       if (storedAppsJSON) {
         const storedApps = JSON.parse(storedAppsJSON) as App[];
         setApps(storedApps);
@@ -58,7 +58,7 @@ export default function AppDetailPage() {
         const updatedApps = apps.map(a =>
           a.id === appId ? { ...a, description: newDescription } : a
         );
-        localStorage.setItem('orbital-dock-apps', JSON.stringify(updatedApps));
+        localStorage.setItem('sonic-dock-apps', JSON.stringify(updatedApps));
         setApps(updatedApps);
 
       } else if (result.error) {

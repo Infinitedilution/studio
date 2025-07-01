@@ -7,7 +7,7 @@ import { Web3Provider } from '@/components/Web3Provider';
 import { BodyStyler } from '@/components/BodyStyler';
 
 export const metadata: Metadata = {
-  title: 'Orbital Dock',
+  title: 'SONIC DOCK',
   description: 'Your personal command center for the Sonic ecosystem.',
 };
 

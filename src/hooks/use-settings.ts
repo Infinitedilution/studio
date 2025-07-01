@@ -4,7 +4,7 @@ import React, { useState, useEffect, createContext, useContext, useCallback, use
 import type { Settings } from '@/lib/types';
 import { PRESET_GRADIENTS } from '@/lib/gradients';
 
-const SETTINGS_KEY = 'orbital-dock-settings';
+const SETTINGS_KEY = 'sonic-dock-settings';
 
 const defaultSettings: Settings = {
   iconSize: 80,
@@ -13,7 +13,7 @@ const defaultSettings: Settings = {
   mode: 'dock',
 };
 
-type SetSettingFn = <K extends keyof Settings>(key: K, value: Settings[K]) => void;
+type SetSettingFn = (key: keyof Settings, value: Settings[keyof Settings]) => void;
 
 interface SettingsContextType {
   settings: Settings;
@@ -82,11 +82,9 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
 
   }, [settings.gradientIndex, isMounted]);
 
-  const setSetting = useCallback((key: keyof Settings, value: any) => {
-      setSettings(prev => ({ ...prev, [key]: value }));
-    },
-    []
-  ) as SetSettingFn;
+  const setSetting: SetSettingFn = useCallback((key, value) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+  }, []);
   
   const value = useMemo(() => ({ settings, setSetting }), [settings, setSetting]);
 

@@ -16,11 +16,11 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Invalid URL parameter', {status: 400});
   }
   
-  const iconHorseUrl = `https://icon.horse/icon/${domain}`;
   const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  const iconHorseUrl = `https://icon.horse/icon/${domain}`;
   const placeholderUrl = 'https://placehold.co/256x256.png';
 
-  const fetchAndServe = async (url: string, validate?: (blob: Blob) => boolean) => {
+  const fetchAndServe = async (url: string, sourceName: string, validate?: (blob: Blob) => boolean) => {
     try {
       const response = await fetch(url, { headers: { 'User-Agent': 'FirebaseStudio-IconFetcher/1.0' } });
       if (!response.ok) {
@@ -35,37 +35,52 @@ export async function GET(request: NextRequest) {
       
       const contentType = response.headers.get('content-type') || 'image/png';
       
-      // Ensure it's an image content type
       if (!contentType.startsWith('image/')) {
         throw new Error(`Invalid content type from ${url}: ${contentType}`);
       }
 
-      return new NextResponse(imageBlob, {
-        status: 200,
-        headers: {
-          'Content-Type': contentType,
-          'Cache-Control': 'public, max-age=86400, immutable', // Cache for 1 day
-        },
-      });
+      const headers = new Headers();
+      headers.set('Content-Type', contentType);
+      headers.set('Cache-Control', 'public, max-age=86400, immutable');
+      headers.set('X-Icon-Source', sourceName);
+
+      return new NextResponse(imageBlob, { status: 200, headers });
     } catch (error) {
       console.warn(`Failed to fetch from ${url}:`, (error as Error).message);
       return null;
     }
   };
-
-  // 1. Try icon.horse
-  let iconResponse = await fetchAndServe(iconHorseUrl);
-  if (iconResponse) {
-    return iconResponse;
-  }
   
-  // 2. Fallback to Google Favicon service
-  iconResponse = await fetchAndServe(googleFaviconUrl, (blob) => blob.size > 100);
+  // 1. Try Google Favicon service (often faster, but can be lower quality)
+  let iconResponse = await fetchAndServe(googleFaviconUrl, 'google', (blob) => blob.size > 100);
   if (iconResponse) {
     return iconResponse;
   }
 
-  // 3. If all else fails, redirect to a static placeholder
-  console.warn(`All icon services failed for ${domain}. Redirecting to placeholder.`);
-  return NextResponse.redirect(placeholderUrl, {status: 302});
+  // 2. Fallback to icon.horse (often higher quality)
+  iconResponse = await fetchAndServe(iconHorseUrl, 'icon.horse');
+  if (iconResponse) {
+    return iconResponse;
+  }
+
+  // 3. If all else fails, fetch and serve the static placeholder
+  console.warn(`All icon services failed for ${domain}. Serving placeholder.`);
+  try {
+    const placeholderResponse = await fetch(placeholderUrl);
+    if (placeholderResponse.ok) {
+      const placeholderBlob = await placeholderResponse.blob();
+      const contentType = placeholderResponse.headers.get('content-type') || 'image/png';
+      
+      const headers = new Headers();
+      headers.set('Content-Type', contentType);
+      headers.set('X-Icon-Source', 'placeholder');
+
+      return new NextResponse(placeholderBlob, { status: 200, headers });
+    }
+    throw new Error(`Placeholder fetch failed with status ${placeholderResponse.status}`);
+  } catch (error) {
+    console.error('Fatal: Failed to fetch placeholder image.', error);
+    // Return a 404 if even the placeholder is unreachable
+    return new NextResponse('Icon not found and placeholder failed.', { status: 404 });
+  }
 }

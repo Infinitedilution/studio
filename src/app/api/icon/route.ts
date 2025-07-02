@@ -1,3 +1,4 @@
+
 import {NextRequest, NextResponse} from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -14,37 +15,57 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return new NextResponse('Invalid URL parameter', {status: 400});
   }
-
+  
+  const iconHorseUrl = `https://icon.horse/icon/${domain}`;
   const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
   const placeholderUrl = 'https://placehold.co/256x256.png';
 
-  try {
-    const response = await fetch(googleFaviconUrl);
-    if (!response.ok) {
-      throw new Error('Google favicon service failed');
-    }
+  const fetchAndServe = async (url: string, validate?: (blob: Blob) => boolean) => {
+    try {
+      const response = await fetch(url, { headers: { 'User-Agent': 'FirebaseStudio-IconFetcher/1.0' } });
+      if (!response.ok) {
+        throw new Error(`Service at ${url} failed with status ${response.status}`);
+      }
 
-    const imageBuffer = await response.arrayBuffer();
-    
-    // Google's service can return a 200 OK with a very small, often transparent,
-    // image if no favicon is found. We check the size to avoid displaying these.
-    // A reasonable threshold for a minimal valid icon is ~100 bytes.
-    if (imageBuffer.byteLength < 100) {
-      throw new Error('Icon not found or is too small to be valid.');
+      const imageBlob = await response.blob();
+
+      if (validate && !validate(imageBlob)) {
+        throw new Error(`Validation failed for icon from ${url}`);
+      }
+      
+      const contentType = response.headers.get('content-type') || 'image/png';
+      
+      // Ensure it's an image content type
+      if (!contentType.startsWith('image/')) {
+        throw new Error(`Invalid content type from ${url}: ${contentType}`);
+      }
+
+      return new NextResponse(imageBlob, {
+        status: 200,
+        headers: {
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=86400, immutable', // Cache for 1 day
+        },
+      });
+    } catch (error) {
+      console.warn(`Failed to fetch from ${url}:`, (error as Error).message);
+      return null;
     }
-    
-    const contentType = response.headers.get('content-type') || 'image/png';
-    
-    return new NextResponse(imageBuffer, {
-      status: 200,
-      headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=86400, immutable', // Cache for 1 day
-      },
-    });
-  } catch (error) {
-    // If Google's favicon service fails or we reject the icon, 
-    // redirect to a final placeholder. The browser will handle loading this.
-    return NextResponse.redirect(placeholderUrl);
+  };
+
+  // 1. Try icon.horse
+  let iconResponse = await fetchAndServe(iconHorseUrl);
+  if (iconResponse) {
+    return iconResponse;
   }
+  
+  // 2. Fallback to Google Favicon service
+  iconResponse = await fetchAndServe(googleFaviconUrl, (blob) => blob.size > 100);
+  if (iconResponse) {
+    return iconResponse;
+  }
+
+  // 3. If all else fails, redirect to a static placeholder
+  console.warn(`All icon services failed for ${domain}. Redirecting to placeholder.`);
+  return NextResponse.redirect(placeholderUrl, {status: 302});
 }

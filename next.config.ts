@@ -22,10 +22,6 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'icon.horse',
-      },
-      {
-        protocol: 'https',
         hostname: 'www.google.com',
         port: '',
         pathname: '/s2/favicons/**',

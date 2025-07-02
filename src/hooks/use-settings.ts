@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
@@ -9,7 +10,7 @@ const SETTINGS_KEY = 'sonic-dock-settings';
 const defaultSettings: Settings = {
   iconSize: 80,
   dockIconSize: 64,
-  gradientIndex: 0,
+  gradientIndex: 7, // Set to Aurora by default
   mode: 'dock',
 };
 

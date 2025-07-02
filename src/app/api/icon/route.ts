@@ -25,6 +25,14 @@ export async function GET(request: NextRequest) {
     }
 
     const imageBuffer = await response.arrayBuffer();
+    
+    // Google's service can return a 200 OK with a very small, often transparent,
+    // image if no favicon is found. We check the size to avoid displaying these.
+    // A reasonable threshold for a minimal valid icon is ~100 bytes.
+    if (imageBuffer.byteLength < 100) {
+      throw new Error('Icon not found or is too small to be valid.');
+    }
+    
     const contentType = response.headers.get('content-type') || 'image/png';
     
     return new NextResponse(imageBuffer, {
@@ -35,7 +43,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    // If Google's favicon service fails, redirect to a final placeholder
+    // If Google's favicon service fails or we reject the icon, 
+    // redirect to a final placeholder. The browser will handle loading this.
     return NextResponse.redirect(placeholderUrl);
   }
 }

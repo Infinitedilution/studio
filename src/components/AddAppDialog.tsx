@@ -17,7 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import type { App } from '@/lib/types';
-import { suggestCategoryAction, getFaviconAction } from '@/actions/suggestCategoryAction';
+import { suggestCategoryAction } from '@/actions/suggestCategoryAction';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
@@ -107,10 +107,8 @@ export function AddAppDialog({ onAddApp, isOpen, onOpenChange, initialValue }: A
   }, [isOpen, initialValue, form, handleUrlBlur]);
 
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { iconUrl } = await getFaviconAction(values.url);
-    
-    onAddApp({ ...values, iconUrl: iconUrl, isFavorite: false });
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    onAddApp({ ...values, isFavorite: false });
     form.reset();
     onOpenChange(false);
     toast({ title: 'App added!', description: `${values.name} has been added to your dock.` });

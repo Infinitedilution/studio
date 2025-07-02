@@ -15,14 +15,3 @@ export async function suggestCategoryAction(url: string) {
     return { error: 'Could not suggest a category. Please enter one manually.' };
   }
 }
-
-export async function getFaviconAction(url: string) {
-    try {
-        const urlObj = new URL(url);
-        const domain = urlObj.hostname.replace(/^www./, '');
-        return { iconUrl: `https://icon.horse/icon/${domain}` };
-    } catch (error) {
-        console.error("Invalid URL for favicon:", error);
-        return { iconUrl: 'https://placehold.co/256x256.png' };
-    }
-}

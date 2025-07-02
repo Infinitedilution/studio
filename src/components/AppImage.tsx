@@ -9,31 +9,32 @@ interface AppImageProps extends Omit<ImageProps, 'src' | 'onError' | 'alt'> {
 }
 
 export function AppImage({ app, ...props }: AppImageProps) {
-  const [currentIconUrl, setCurrentIconUrl] = useState(app.iconUrl);
+  // If a custom data URL is provided, use it. Otherwise, use our API proxy.
+  const getInitialSrc = (app: App) => {
+    return app.iconUrl?.startsWith('data:') 
+      ? app.iconUrl 
+      : `/api/icon?url=${encodeURIComponent(app.url)}`;
+  }
 
+  const [src, setSrc] = useState(getInitialSrc(app));
+  
+  // Update src if app data changes (e.g. from the Edit dialog)
   useEffect(() => {
-    setCurrentIconUrl(app.iconUrl);
-  }, [app.iconUrl]);
+    setSrc(getInitialSrc(app));
+  }, [app.url, app.iconUrl]);
+
 
   const handleError = () => {
-    if (currentIconUrl === app.iconUrl) {
-        try {
-            const url = new URL(app.url);
-            const fallbackUrl = `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=128`;
-            setCurrentIconUrl(fallbackUrl);
-        } catch (e) {
-            setCurrentIconUrl('https://placehold.co/256x256.png');
-        }
-    } else {
-        setCurrentIconUrl('https://placehold.co/256x256.png');
-    }
+    // If our proxy or the data URL fails, use the final placeholder.
+    setSrc('https://placehold.co/256x256.png');
   };
 
   return (
     <Image
-      src={currentIconUrl}
+      src={src}
       onError={handleError}
       alt={`${app.name} icon`}
+      unoptimized={src.startsWith('data:')} // Do not optimize data URIs
       {...props}
     />
   );

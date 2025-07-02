@@ -22,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   url: z.string().url({ message: 'Please enter a valid URL.' }).refine(val => val.startsWith('https://'), { message: 'URL must be secure (https).' }),
-  iconUrl: z.string().url({ message: 'Icon must be a valid data URL.' }),
+  iconUrl: z.string(), // Can be a data URI or empty if using default
   category: z.string().min(2, { message: 'Category is required.' }),
 });
 
@@ -36,26 +36,33 @@ interface EditAppDialogProps {
 export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAppDialogProps) {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [iconPreview, setIconPreview] = useState<string>(app.iconUrl);
+  // Use a placeholder if no custom iconUrl is set
+  const [iconPreview, setIconPreview] = useState<string>(app.iconUrl || 'https://placehold.co/64x64.png');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
         name: app.name,
         url: app.url,
-        iconUrl: app.iconUrl,
+        iconUrl: app.iconUrl || '',
         category: app.category,
     },
   });
 
   useEffect(() => {
-    form.reset({
-        name: app.name,
-        url: app.url,
-        iconUrl: app.iconUrl,
-        category: app.category,
-    });
-    setIconPreview(app.iconUrl);
+    if (isOpen) {
+      form.reset({
+          name: app.name,
+          url: app.url,
+          iconUrl: app.iconUrl || '',
+          category: app.category,
+      });
+      // If the app doesn't have a custom icon, show the proxy URL in preview
+      const previewUrl = app.iconUrl?.startsWith('data:') 
+        ? app.iconUrl 
+        : `/api/icon?url=${encodeURIComponent(app.url)}`;
+      setIconPreview(previewUrl);
+    }
   }, [app, form, isOpen]);
 
 
@@ -122,7 +129,7 @@ export function EditAppDialog({ app, onUpdateApp, isOpen, onOpenChange }: EditAp
             <FormItem>
               <FormLabel>Icon</FormLabel>
               <div className="flex items-center gap-4">
-                  <Image src={iconPreview} alt="Icon preview" width={64} height={64} className="rounded-lg bg-card object-cover" />
+                  <Image src={iconPreview} alt="Icon preview" width={64} height={64} className="rounded-lg bg-card object-cover" key={iconPreview} />
                   <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
                     Upload Icon
                   </Button>

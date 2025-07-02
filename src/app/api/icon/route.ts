@@ -2,7 +2,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const {searchParams} = new URL(request.url);
+  const {searchParams} = request.nextUrl;
   const appUrl = searchParams.get('url');
 
   if (!appUrl) {
@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
 
   const fetchAndServe = async (url: string, sourceName: string, validate?: (blob: Blob) => boolean) => {
     try {
-      const response = await fetch(url, { headers: { 'User-Agent': 'FirebaseStudio-IconFetcher/1.0' } });
+      // Using a standard browser User-Agent can help avoid being blocked by services.
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Service at ${url} failed with status ${response.status}`);
       }
@@ -46,19 +47,20 @@ export async function GET(request: NextRequest) {
 
       return new NextResponse(imageBlob, { status: 200, headers });
     } catch (error) {
-      console.warn(`Failed to fetch from ${url}:`, (error as Error).message);
+      console.warn(`Failed to fetch from ${sourceName} (${url}):`, (error as Error).message);
       return null;
     }
   };
   
-  // 1. Try Google Favicon service (often faster, but can be lower quality)
-  let iconResponse = await fetchAndServe(googleFaviconUrl, 'google', (blob) => blob.size > 100);
+  // 1. Try icon.horse (often higher quality)
+  let iconResponse = await fetchAndServe(iconHorseUrl, 'icon.horse');
   if (iconResponse) {
     return iconResponse;
   }
 
-  // 2. Fallback to icon.horse (often higher quality)
-  iconResponse = await fetchAndServe(iconHorseUrl, 'icon.horse');
+  // 2. Fallback to Google Favicon service
+  // Google's service can return a tiny 1x1 transparent pixel, so we validate the size.
+  iconResponse = await fetchAndServe(googleFaviconUrl, 'google', (blob) => blob.size > 100);
   if (iconResponse) {
     return iconResponse;
   }

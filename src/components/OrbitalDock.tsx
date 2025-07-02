@@ -519,7 +519,7 @@ export function SonicDock() {
                 />
               </div>
             </motion.div>
-            <p className="text-[11px] leading-tight pt-1 font-medium text-foreground/90 dark:text-foreground/80 truncate w-full">{app.name}</p>
+            <p className="text-[11px] leading-tight pt-1 font-bold text-foreground/90 dark:text-foreground/80 w-full h-[28px]">{app.name}</p>
           </Reorder.Item>
         ))}
       </Reorder.Group>
